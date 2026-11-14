@@ -57,7 +57,7 @@ export function TenantFormModal({ open, onClose, tenant }: { open: boolean; onCl
       <form onSubmit={handleSubmit((v) => m.mutate(v))} noValidate>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Full name" className="sm:col-span-2" error={errors.full_name?.message}><Input invalid={!!errors.full_name} {...register('full_name')} /></Field>
-          <Field label="Email" hint="Needed to invite the tenant to their own login." error={errors.email?.message}><Input type="email" invalid={!!errors.email} {...register('email')} /></Field>
+          <Field label="Email" hint="Needed so the tenant can register for their own login." error={errors.email?.message}><Input type="email" invalid={!!errors.email} {...register('email')} /></Field>
           <Field label="Mobile number" error={errors.phone?.message}><Input type="tel" inputMode="tel" invalid={!!errors.phone} {...register('phone')} /></Field>
           <Field label="Date of birth (optional)" error={errors.date_of_birth?.message}><Input type="date" invalid={!!errors.date_of_birth} {...register('date_of_birth')} /></Field>
           <Field label="Identity verification" error={errors.identity_status?.message}>
@@ -87,7 +87,7 @@ export function useInviteTenant() {
       }
       if (data?.error) throw new Error(data.error)
     },
-    onSuccess: () => { void qc.invalidateQueries(); toast.success('Invitation email sent.') },
+    onSuccess: () => { void qc.invalidateQueries(); toast.success('Marked as invited. Ask the tenant to register at ' + window.location.origin + '/register with this email; they confirm with a 6-digit code.') },
     onError: (e) => toast.error(errMsg(e)),
   })
 }

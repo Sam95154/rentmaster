@@ -175,57 +175,63 @@ export function RegisterPage() {
 }
 
 export function ForgotPasswordPage() {
-  const [sent, setSent] = useState(false)
+  const navigate = useNavigate()
+  const [email, setEmail] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<{ email: string }>({ resolver: zodResolver(loginSchema.pick({ email: true })) })
+  const [note, setNote] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [code, setCode] = useState('')
+  const emailForm = useForm<{ email: string }>({ resolver: zodResolver(loginSchema.pick({ email: true })) })
+  const pwForm = useForm<z.infer<typeof resetSchema>>({ resolver: zodResolver(resetSchema) })
 
-  const onSubmit = handleSubmit(async (v) => {
+  const sendCode = emailForm.handleSubmit(async (v) => {
     setError(null)
-    const { error: e } = await supabase.auth.resetPasswordForEmail(v.email, { redirectTo: `${window.location.origin}/reset-password` })
-    if (e && e.status !== 400) { setError(errMsg(e)); return }
-    setSent(true) // always show the same result so accounts cannot be enumerated
+    const { error: e } = await supabase.auth.resetPasswordForEmail(v.email)
+    if (e && e.status !== 400) { setError(e.status === 429 ? 'Please wait a minute before asking for another code.' : errMsg(e)); return }
+    setEmail(v.email) // same screen whether or not the account exists, so accounts cannot be enumerated
+  })
+
+  const resend = async () => {
+    if (!email) return
+    setError(null); setNote(null)
+    const { error: e } = await supabase.auth.resetPasswordForEmail(email)
+    if (e && e.status !== 400) setError(e.status === 429 ? 'Please wait a minute before asking for another code.' : errMsg(e)); else setNote('A new code has been sent.')
+  }
+
+  const reset = pwForm.handleSubmit(async (v) => {
+    setError(null); setNote(null)
+    const token = code.replace(/\s/g, '')
+    if (!email || !/^\d{6}$/.test(token)) { setError('Enter the 6-digit code from your email.'); return }
+    setBusy(true)
+    const { error: ve } = await supabase.auth.verifyOtp({ email, token, type: 'recovery' })
+    if (ve) { setBusy(false); setError('That code is wrong or has expired. Check it, or request a new one.'); return }
+    const { error: ue } = await supabase.auth.updateUser({ password: v.password })
+    setBusy(false)
+    if (ue) { setError(errMsg(ue)); return }
+    navigate('/app', { replace: true })
   })
 
   return (
-    <AuthLayout title="Reset your password" subtitle="Enter your email and we will send you a reset link." footer={<Link to="/login" className="font-medium text-brand hover:underline">Back to sign in</Link>}>
-      {sent ? (
-        <p className="text-sm text-ink-soft">If an account exists for that email, a reset link is on its way. The link expires, so use it soon.</p>
-      ) : (
-        <form onSubmit={onSubmit} className="space-y-4" noValidate>
+    <AuthLayout title="Reset your password" subtitle={email ? undefined : 'Enter your email and we will send you a 6-digit code.'} footer={<Link to="/login" className="font-medium text-brand hover:underline">Back to sign in</Link>}>
+      {email ? (
+        <form onSubmit={reset} className="space-y-4" noValidate>
+          <p className="text-sm text-ink-soft">If an account exists for <strong>{email}</strong>, a 6-digit code is on its way. Enter it with your new password.</p>
           <FormError message={error} />
-          <Field label="Email" error={errors.email?.message}><Input type="email" autoComplete="email" invalid={!!errors.email} {...register('email')} /></Field>
-          <Button type="submit" className="w-full" loading={isSubmitting}>Send reset link</Button>
+          {note && <p role="status" className="rounded-lg bg-success-50 px-3 py-2 text-sm text-ink">{note}</p>}
+          <Field label="Verification code">
+            <Input value={code} onChange={(ev) => setCode(ev.target.value)} inputMode="numeric" autoComplete="one-time-code" maxLength={6}
+              className="text-center text-xl tracking-[0.4em]" placeholder="------" aria-label="Verification code" />
+          </Field>
+          <Field label="New password" hint="At least 8 characters with a letter and a number." error={pwForm.formState.errors.password?.message}><Input type="password" autoComplete="new-password" invalid={!!pwForm.formState.errors.password} {...pwForm.register('password')} /></Field>
+          <Field label="Confirm new password" error={pwForm.formState.errors.confirm?.message}><Input type="password" autoComplete="new-password" invalid={!!pwForm.formState.errors.confirm} {...pwForm.register('confirm')} /></Field>
+          <Button type="submit" className="w-full" loading={busy}>Update password</Button>
+          <button type="button" onClick={resend} className="w-full text-center text-sm font-medium text-brand hover:underline">Send a new code</button>
         </form>
-      )}
-    </AuthLayout>
-  )
-}
-
-export function ResetPasswordPage() {
-  const { session, loading } = useAuth()
-  const [error, setError] = useState<string | null>(null)
-  const [ok, setOk] = useState(false)
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<z.infer<typeof resetSchema>>({ resolver: zodResolver(resetSchema) })
-
-  const onSubmit = handleSubmit(async (v) => {
-    setError(null)
-    const { error: e } = await supabase.auth.updateUser({ password: v.password })
-    if (e) { setError(errMsg(e)); return }
-    setOk(true)
-  })
-
-  return (
-    <AuthLayout title="Choose a new password" footer={<Link to="/login" className="font-medium text-brand hover:underline">Back to sign in</Link>}>
-      {ok ? (
-        <p className="text-sm text-success">Your password was updated. You can now <Link to="/app" className="font-medium underline">continue</Link>.</p>
-      ) : !loading && !session ? (
-        <p className="text-sm text-ink-soft">This reset link is invalid or has expired. <Link to="/forgot-password" className="font-medium text-brand underline">Request a new one</Link>.</p>
       ) : (
-        <form onSubmit={onSubmit} className="space-y-4" noValidate>
+        <form onSubmit={sendCode} className="space-y-4" noValidate>
           <FormError message={error} />
-          <Field label="New password" hint="At least 8 characters with a letter and a number." error={errors.password?.message}><Input type="password" autoComplete="new-password" invalid={!!errors.password} {...register('password')} /></Field>
-          <Field label="Confirm new password" error={errors.confirm?.message}><Input type="password" autoComplete="new-password" invalid={!!errors.confirm} {...register('confirm')} /></Field>
-          <Button type="submit" className="w-full" loading={isSubmitting}>Update password</Button>
+          <Field label="Email" error={emailForm.formState.errors.email?.message}><Input type="email" autoComplete="email" invalid={!!emailForm.formState.errors.email} {...emailForm.register('email')} /></Field>
+          <Button type="submit" className="w-full" loading={emailForm.formState.isSubmitting}>Send code</Button>
         </form>
       )}
     </AuthLayout>

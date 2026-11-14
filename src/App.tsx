@@ -1,8 +1,8 @@
 import { lazy, Suspense } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { ProtectedRoute, RoleRedirect, FullPageSpinner } from '@/auth/ProtectedRoute'
 import { AboutPage, ContactPage, FeaturesPage, Landing, LegalPage, PricingPage, PublicLayout } from '@/pages/PublicPages'
-import { ForgotPasswordPage, LoginPage, RegisterPage, ResetPasswordPage } from '@/pages/AuthPages'
+import { ForgotPasswordPage, LoginPage, RegisterPage } from '@/pages/AuthPages'
 import ComingSoon from '@/pages/ComingSoon'
 import NotificationsPage from '@/pages/NotificationsPage'
 import SettingsPage from '@/pages/SettingsPage'
@@ -63,7 +63,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/reset-password" element={<Navigate to="/forgot-password" replace />} />
         <Route path="/app" element={<RoleRedirect />} />
         <Route path="/support" element={<SupportRedirect />} />
 

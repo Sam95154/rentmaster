@@ -1,5 +1,5 @@
 // Supabase Edge Function: invite-tenant
-// Verifies the caller owns the tenant record, then sends a Supabase Auth invite email.
+// Verifies the caller owns the tenant record, then marks the tenant as invited (no email or link is sent).
 // The service-role key stays on the server; it is never shipped to the browser.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -35,14 +35,9 @@ Deno.serve(async (req) => {
   if (!tenant.email) return json({ error: 'Add an email address to this tenant first' }, 400)
   if (tenant.user_id) return json({ error: 'This tenant already has an account' }, 409)
 
+  // No email or link is sent. The tenant registers on the site with this address and confirms it with a one-time code;
+  // the signup trigger then links the new account to this tenant record.
   const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
-  const { error: inviteErr } = await admin.auth.admin.inviteUserByEmail(tenant.email, {
-    data: { full_name: tenant.full_name },
-    redirectTo: Deno.env.get('SITE_URL') ?? undefined,
-  })
-  if (inviteErr) return json({ error: inviteErr.message }, 400)
-
-  // The signup trigger links the account to this tenant record; only mark "invited" if it has not linked yet.
   await admin.from('tenant_profiles').update({ status: 'invited' }).eq('id', tenant.id).is('user_id', null)
   return json({ ok: true })
 })
