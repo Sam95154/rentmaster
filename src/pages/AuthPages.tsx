@@ -42,11 +42,52 @@ function FormError({ message }: { message: string | null }) {
   return message ? <p role="alert" className="rounded-lg bg-danger-50 px-3 py-2 text-sm text-danger">{message}</p> : null
 }
 
+function VerifyCode({ email, onVerified }: { email: string; onVerified: () => void }) {
+  const [code, setCode] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [note, setNote] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
+  const submit = async (ev: React.FormEvent) => {
+    ev.preventDefault()
+    setError(null); setNote(null)
+    const token = code.replace(/\s/g, '')
+    if (!/^\d{6,10}$/.test(token)) { setError('Enter the numeric code from your email.'); return }
+    setBusy(true)
+    const { error: e } = await supabase.auth.verifyOtp({ email, token, type: 'signup' })
+    setBusy(false)
+    if (e) { setError('That code is wrong or has expired. Check it, or request a new one.'); return }
+    onVerified()
+  }
+  const resend = async () => {
+    setError(null); setNote(null)
+    const { error: e } = await supabase.auth.resend({ type: 'signup', email })
+    if (e) setError(e.status === 429 ? 'Please wait a minute before asking for another code.' : errMsg(e))
+    else setNote('A new code has been sent.')
+  }
+  return (
+    <form onSubmit={submit} className="space-y-4" noValidate>
+      <div className="flex flex-col items-center text-center">
+        <MailCheck className="h-10 w-10 text-success" aria-hidden />
+        <p className="mt-3 text-sm text-ink-soft">We sent a verification code to <strong>{email}</strong>. Enter it below to confirm your email.</p>
+      </div>
+      <FormError message={error} />
+      {note && <p role="status" className="rounded-lg bg-success-50 px-3 py-2 text-sm text-ink">{note}</p>}
+      <Field label="Verification code">
+        <Input value={code} onChange={(ev) => setCode(ev.target.value)} inputMode="numeric" autoComplete="one-time-code" maxLength={10}
+          className="text-center text-xl tracking-[0.4em]" placeholder="------" aria-label="Verification code" />
+      </Field>
+      <Button type="submit" className="w-full" loading={busy}>Verify and continue</Button>
+      <button type="button" onClick={resend} className="w-full text-center text-sm font-medium text-brand hover:underline">Send a new code</button>
+    </form>
+  )
+}
+
 export function LoginPage() {
   const { session, role, loading } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const [error, setError] = useState<string | null>(null)
+  const [verifyEmail, setVerifyEmail] = useState<string | null>(null)
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<z.infer<typeof loginSchema>>({ resolver: zodResolver(loginSchema) })
 
   if (!loading && session && role) return <Navigate to={homePath(role)} replace />
@@ -56,12 +97,25 @@ export function LoginPage() {
     const { error: e } = await supabase.auth.signInWithPassword({ email: v.email, password: v.password })
     if (e) {
       // Same message for unknown email and wrong password so accounts cannot be enumerated.
-      setError(e.message.toLowerCase().includes('email not confirmed') ? 'Please confirm your email first. Check your inbox for the link.' : 'Incorrect email or password.')
+      if (e.message.toLowerCase().includes('email not confirmed')) {
+        await supabase.auth.resend({ type: 'signup', email: v.email })
+        setVerifyEmail(v.email)
+        return
+      }
+      setError('Incorrect email or password.')
       return
     }
     const from = (location.state as { from?: string } | null)?.from
     navigate(safeRedirect(from), { replace: true })
   })
+
+  if (verifyEmail) {
+    return (
+      <AuthLayout title="Confirm your email" footer={<button type="button" onClick={() => setVerifyEmail(null)} className="font-medium text-brand hover:underline">Back to sign in</button>}>
+        <VerifyCode email={verifyEmail} onVerified={() => navigate('/app', { replace: true })} />
+      </AuthLayout>
+    )
+  }
 
   return (
     <AuthLayout title="Sign in" subtitle="Welcome back to RENTMASTER." footer={<>New here? <Link to="/register" className="font-medium text-brand hover:underline">Create an account</Link></>}>
@@ -88,7 +142,7 @@ export function RegisterPage() {
     const { data, error: e } = await supabase.auth.signUp({
       email: v.email,
       password: v.password,
-      options: { data: { full_name: v.full_name, phone: v.phone || null }, emailRedirectTo: `${window.location.origin}/login` },
+      options: { data: { full_name: v.full_name, phone: v.phone || null } },
     })
     if (e) { setError(errMsg(e)); return }
     if (data.session) { navigate('/app', { replace: true }); return }
@@ -97,11 +151,8 @@ export function RegisterPage() {
 
   if (done) {
     return (
-      <AuthLayout title="Check your email" footer={<Link to="/login" className="font-medium text-brand hover:underline">Back to sign in</Link>}>
-        <div className="flex flex-col items-center text-center">
-          <MailCheck className="h-10 w-10 text-success" aria-hidden />
-          <p className="mt-3 text-sm text-ink-soft">We sent a confirmation link to <strong>{done}</strong>. Open it to activate your account, then sign in.</p>
-        </div>
+      <AuthLayout title="Confirm your email" footer={<Link to="/login" className="font-medium text-brand hover:underline">Back to sign in</Link>}>
+        <VerifyCode email={done} onVerified={() => navigate('/app', { replace: true })} />
       </AuthLayout>
     )
   }
