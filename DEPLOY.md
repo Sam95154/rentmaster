@@ -26,7 +26,11 @@ You need three things: a Supabase project (database, login, files, functions), a
 
 Payments go to the Razorpay account you configure here. Paying owners out is not built.
 
-## 3. Host the app (Netlify, Cloudflare Pages or Vercel)
+## 3. Host the app
+
+**Render:** the repository has a `render.yaml` Blueprint. In Render choose New → Blueprint, pick the GitHub repository, and enter `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` when asked. Page refresh routing and security headers are already in the file. After the first deploy, put the Render address (for example `https://rentmaster.onrender.com`) into Supabase Site URL and Redirect URLs and into the `SITE_URL` and `ALLOWED_ORIGIN` secrets.
+
+**Netlify, Cloudflare Pages or Vercel:**
 
 - Build command `npm run build`, output folder `dist`.
 - Environment variables: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (the anon key only, never the service-role key).
