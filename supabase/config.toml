@@ -1,0 +1,10 @@
+# Only the settings that differ from Supabase defaults.
+# Razorpay calls the webhook without a Supabase JWT; it is authenticated by the HMAC signature instead.
+[functions.razorpay-webhook]
+verify_jwt = false
+
+[functions.create-razorpay-order]
+verify_jwt = true
+
+[functions.invite-tenant]
+verify_jwt = true
