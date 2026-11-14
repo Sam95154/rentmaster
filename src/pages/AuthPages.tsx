@@ -51,7 +51,7 @@ function VerifyCode({ email, onVerified }: { email: string; onVerified: () => vo
     ev.preventDefault()
     setError(null); setNote(null)
     const token = code.replace(/\s/g, '')
-    if (!/^\d{6,10}$/.test(token)) { setError('Enter the numeric code from your email.'); return }
+    if (!/^\d{6}$/.test(token)) { setError('Enter the numeric code from your email.'); return }
     setBusy(true)
     const { error: e } = await supabase.auth.verifyOtp({ email, token, type: 'signup' })
     setBusy(false)
@@ -73,7 +73,7 @@ function VerifyCode({ email, onVerified }: { email: string; onVerified: () => vo
       <FormError message={error} />
       {note && <p role="status" className="rounded-lg bg-success-50 px-3 py-2 text-sm text-ink">{note}</p>}
       <Field label="Verification code">
-        <Input value={code} onChange={(ev) => setCode(ev.target.value)} inputMode="numeric" autoComplete="one-time-code" maxLength={10}
+        <Input value={code} onChange={(ev) => setCode(ev.target.value)} inputMode="numeric" autoComplete="one-time-code" maxLength={6}
           className="text-center text-xl tracking-[0.4em]" placeholder="------" aria-label="Verification code" />
       </Field>
       <Button type="submit" className="w-full" loading={busy}>Verify and continue</Button>
