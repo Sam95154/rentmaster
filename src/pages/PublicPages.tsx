@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowRight, Building2, Check, ClipboardList, CreditCard, FileSignature, History, KeyRound, LockKeyhole, Menu, ShieldCheck, UserCog, Users, Wrench, X } from 'lucide-react'
+import { ArrowRight, Building2, Check, ClipboardList, CreditCard, FileSignature, History, KeyRound, LockKeyhole, Menu, ShieldCheck, Users, Wrench, X } from 'lucide-react'
 import { Badge, Button, Card, Logo, Skeleton } from '@/components/ui'
 import { supabase } from '@/lib/supabase'
 import { formatINR } from '@/lib/utils'
@@ -79,7 +79,6 @@ const FEATURES: { icon: typeof Building2; title: string; text: string; status: '
 const ROLES = [
   { icon: Building2, title: 'Owners and managers', line: 'One place to run the portfolio.', points: ['Properties, units and tenants', 'Invoices, payments and receipts', 'Agreements, deposits and reports'], to: '/register', cta: 'Create an owner account' },
   { icon: Users, title: 'Tenants', line: 'A clear view of your tenancy.', points: ['Rent due, payment history and receipts', 'Maintenance requests with photos', 'Direct messages with your owner'], to: '/register', cta: 'Register with your owner’s email' },
-  { icon: UserCog, title: 'Platform administrators', line: 'Oversight without access to private data.', points: ['Owners, plans and subscriptions', 'Transactions and support tickets', 'Announcements and audit logs'], to: '/login', cta: 'Administrator sign in' },
 ]
 
 const STEPS = [
@@ -98,7 +97,7 @@ const SECURITY = [
 const FAQ = [
   ['Who can create an account?', 'Property owners and managers register directly. Tenants register with the email address their owner added, which links the new account to the correct tenancy automatically.'],
   ['How do tenants pay rent?', 'Owners record payments received by cash, bank transfer or UPI. Online payment through Razorpay is available once the platform enables it; the invoice is marked paid only after the gateway confirms the payment.'],
-  ['Can other owners see my data?', 'No. Each owner’s records are isolated at the database level. Platform administrators manage accounts and subscriptions but do not see tenants’ personal documents.'],
+  ['Can other owners see my data?', 'No. Each owner’s records are isolated at the database level. The platform operator manages accounts and subscriptions but does not see tenants’ personal documents.'],
   ['Does RentMaster send reminders?', 'Rent and agreement reminders appear inside the app and in the notification bell. Email and SMS reminders are not available yet.'],
   ['Can I export my records?', 'Yes. Income, expense, outstanding rent and vacancy reports can be exported as CSV files.'],
 ] as const
@@ -194,8 +193,8 @@ export function Landing() {
 
       {/* Roles */}
       <Section>
-        <Reveal><SectionHead title="Built for everyone involved in a tenancy" lede="Each person signs in on the same page and lands in a panel designed for their role." /></Reveal>
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
+        <Reveal><SectionHead title="Built for everyone involved in a tenancy" lede="Owners and tenants sign in on the same page and each lands in a panel designed for their role." /></Reveal>
+        <div className="mt-10 grid gap-5 md:mx-auto md:max-w-4xl md:grid-cols-2">
           {ROLES.map((r, i) => (
             <Reveal key={r.title} delay={i * 100}>
               <div className="flex h-full flex-col rounded-xl border border-line bg-white p-6 shadow-card">
