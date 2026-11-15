@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useQuery } from '@tanstack/react-query'
@@ -9,16 +9,16 @@ import { errMsg } from '@/lib/errors'
 import { loginSchema, registerSchema, resetSchema } from '@/lib/schemas'
 import type { z } from 'zod'
 import { Button, Card, Field, Input, Logo } from '@/components/ui'
+import HeroMedia from '@/components/HeroMedia'
 import { safeRedirect } from '@/lib/utils'
 import { homePath, useAuth } from '@/auth/AuthProvider'
 
-const CityScene = lazy(() => import('@/components/CityScene'))
 
 function AuthLayout({ title, subtitle, children, footer }: { title: string; subtitle?: string; children: ReactNode; footer?: ReactNode }) {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="relative hidden flex-col justify-between overflow-hidden bg-navy p-10 text-white lg:flex">
-        <Suspense fallback={null}><CityScene mode="compact" className="absolute inset-0" /></Suspense>
+        <HeroMedia mode="compact" className="absolute inset-0 h-full w-full" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy/70 via-transparent to-navy/90" />
         <Link to="/" className="relative"><Logo light /></Link>
         <div className="relative mt-auto">

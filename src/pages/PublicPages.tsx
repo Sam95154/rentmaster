@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowRight, Building2, Check, CreditCard, FileSignature, KeyRound, Menu, ShieldCheck, UserCog, Users, Wrench, X } from 'lucide-react'
@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase'
 import { formatINR } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 import { Reveal, useTilt } from '@/lib/motion'
+import HeroMedia from '@/components/HeroMedia'
 
 
 const LINKS = [
@@ -64,7 +65,6 @@ function Section({ children, className }: { children: ReactNode; className?: str
   return <section className={cn('mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16', className)}>{children}</section>
 }
 
-const CityScene = lazy(() => import('@/components/CityScene'))
 
 const FEATURES: { icon: typeof Building2; title: string; text: string; status: 'live' | 'soon'; hue: string }[] = [
   { icon: Building2, title: 'Properties and units', text: 'Manage buildings, floors and every rental unit with rent, deposit and status.', status: 'live', hue: 'bg-brand-50 text-brand' },
@@ -127,7 +127,7 @@ export function Landing() {
   return (
     <>
       <div className="relative min-h-[640px] overflow-hidden bg-navy text-white sm:min-h-[720px]">
-        <Suspense fallback={null}><CityScene className="absolute inset-0" /></Suspense>
+        <HeroMedia className="absolute inset-0 h-full w-full" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy/90 via-navy/45 to-transparent sm:from-navy/85 sm:via-navy/30" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-navy/80 to-transparent" />
         <Section className="relative flex min-h-[640px] items-center py-16 sm:min-h-[720px]">

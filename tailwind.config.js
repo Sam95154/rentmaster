@@ -35,6 +35,7 @@ export default {
         marquee: { from: { transform: 'translateX(0)' }, to: { transform: 'translateX(-50%)' } },
         grow: { from: { transform: 'scaleY(0)' }, to: { transform: 'scaleY(1)' } },
         draw: { from: { transform: 'scaleX(0)' }, to: { transform: 'scaleX(1)' } },
+        kenburns: { '0%': { transform: 'scale(1.04) translate3d(0,0,0)' }, '100%': { transform: 'scale(1.16) translate3d(-2%,-1.5%,0)' } },
         pop: { '0%': { transform: 'scale(0.6)', opacity: '0' }, '70%': { transform: 'scale(1.06)', opacity: '1' }, '100%': { transform: 'scale(1)' } },
       },
       animation: {
@@ -44,6 +45,7 @@ export default {
         spiny: 'spiny 28s linear infinite',
         twinkle: 'twinkle 3.2s ease-in-out infinite',
         marquee: 'marquee 38s linear infinite',
+        kenburns: 'kenburns 40s ease-in-out infinite alternate',
       },
     },
   },

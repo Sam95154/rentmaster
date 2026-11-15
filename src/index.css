@@ -19,6 +19,6 @@ h1, h2, h3, .font-display { font-family: 'Manrope', 'DM Sans', ui-sans-serif, sy
 .scene3d * { backface-visibility: visible; }
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; }
-  .animate-spiny, .animate-float, .animate-float-slow, .animate-blob, .animate-marquee, .animate-twinkle { animation: none !important; }
+  .animate-spiny, .animate-float, .animate-float-slow, .animate-blob, .animate-marquee, .animate-twinkle, .animate-kenburns { animation: none !important; }
   .animate-spiny { transform: rotateX(-16deg) rotateY(-32deg); }
 }

@@ -277,8 +277,8 @@ export default function CityScene({ mode = 'hero', className }: { mode?: 'hero' 
     const frame = (now: number) => {
       const t = (now - t0) / 1000, dt = Math.min(0.05, (now - last) / 1000); last = now
       mouse.sx += (mouse.x - mouse.sx) * 0.04; mouse.sy += (mouse.y - mouse.sy) * 0.04
-      const ang = Math.sin(t * 0.04) * 0.5 + mouse.sx * 0.45
-      const rad = (compact ? 400 : 340) + Math.sin(t * 0.03) * 14
+      const ang = Math.sin(t * 0.03) * 0.05 + mouse.sx * 0.14
+      const rad = (compact ? 400 : 340) + Math.sin(t * 0.03) * 6
       const scroll = Math.min(1, window.scrollY / Math.max(1, h))
       camera.position.set(Math.sin(ang) * rad, 118 + mouse.sy * -26 + scroll * 70, Math.cos(ang) * rad)
       camera.lookAt(target)
