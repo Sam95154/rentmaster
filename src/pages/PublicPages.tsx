@@ -69,7 +69,7 @@ const FEATURES: { icon: typeof Building2; title: string; text: string; status: '
   { icon: CreditCard, title: 'Rent and payments', text: 'Invoices, partial payments, receipts and offline payment records. Online payment with verified webhooks is switched on once the owner platform connects Razorpay.', status: 'live' },
   { icon: Wrench, title: 'Maintenance requests', text: 'Tenants raise requests with photos; owners assign, track and close them.', status: 'live' },
   { icon: FileSignature, title: 'Deposits and reports', text: 'Deposit ledger, income and expense reports with CSV export.', status: 'live' },
-  { icon: FileSignature, title: 'Rental agreements', text: 'Agreement records, expiry tracking and renewal reminders.', status: 'soon' },
+  { icon: FileSignature, title: 'Rental agreements', text: 'Agreement records, expiry tracking and renewal reminders.', status: 'live' },
 ]
 
 export function Landing() {

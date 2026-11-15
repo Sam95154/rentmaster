@@ -25,7 +25,7 @@ alter default privileges in schema public grant all on sequences to anon, authen
 alter default privileges in schema public grant all on functions to anon, authenticated, service_role;
 `
 await pg.exec(shim)
-for (const f of ['0001_schema.sql', '0002_rls.sql', '0003_functions.sql', '0004_storage.sql', '0005_tenant_views_notifications.sql', '0006_finance.sql', '0007_payments_maintenance_documents.sql', '0008_messages_announcements_reminders.sql', '0009_admin_platform.sql', '0010_security_hardening.sql']) {
+for (const f of ['0001_schema.sql', '0002_rls.sql', '0003_functions.sql', '0004_storage.sql', '0005_tenant_views_notifications.sql', '0006_finance.sql', '0007_payments_maintenance_documents.sql', '0008_messages_announcements_reminders.sql', '0009_admin_platform.sql', '0010_security_hardening.sql', '0011_rental_agreements.sql']) {
   const sql = readFileSync(MIG + f, 'utf8').replace(/create extension if not exists pgcrypto;/, '')
   try { await pg.exec(sql); console.log('applied', f) } catch (e) { console.log('MIGRATION FAILED', f, e.message); process.exit(2) }
 }
@@ -1047,6 +1047,56 @@ await t('a tenant cannot reach another tenant or the owner dataset through any t
 await t('a tenant sees only their own payments', async () => {
   await as(T1); const rows = await q(`select tenant_id from payments`)
   ok(rows.every((r) => r.tenant_id === t1), 'foreign payment visible')
+})
+
+
+console.log('\n== Rental agreements ==')
+await as(A)
+const agId = (await q(`insert into rental_agreements (owner_id,assignment_id,tenant_id,unit_id,start_date,expiry_date,monthly_rent,security_deposit) values ($1,$2,$3,$4,current_date - 100,current_date + 5,4000,0) returning id`, [A, asgR, tR, uR]))[0].id
+await t('owner records an agreement; only one active per tenancy', async () => {
+  ok(agId, 'not created')
+  await rejects(() => q(`insert into rental_agreements (owner_id,assignment_id,tenant_id,unit_id,start_date,expiry_date,monthly_rent) values ($1,$2,$3,$4,current_date,current_date + 30,1)`, [A, asgR, tR, uR]), /duplicate|unique/)
+})
+await t('agreement must match its tenancy and owner', async () => {
+  await as(A)
+  await rejects(() => q(`insert into rental_agreements (owner_id,assignment_id,tenant_id,unit_id,start_date,expiry_date,monthly_rent,status) values ($1,$2,$3,$4,current_date,current_date + 30,1,'draft')`, [A, asgR, t1, uR]), /./)
+  await as(B)
+  await rejects(() => q(`insert into rental_agreements (owner_id,assignment_id,tenant_id,unit_id,start_date,expiry_date,monthly_rent) values ($1,$2,$3,$4,current_date,current_date + 30,1)`, [B, asgR, tR, uR]), /./)
+  await as(A)
+  await rejects(() => q(`update rental_agreements set tenant_id=$1 where id=$2`, [t1, agId]), /./)
+  await rejects(() => q(`insert into rental_agreements (owner_id,assignment_id,tenant_id,unit_id,start_date,expiry_date,monthly_rent,status,document_id) values ($1,$2,$3,$4,current_date,current_date + 30,1,'draft','00000000-0000-0000-0000-000000000001')`, [A, asgR, tR, uR]), /./)
+})
+await t('tenant reads only their own agreement and cannot change it', async () => {
+  await as(RT); eq((await q(`select id from rental_agreements`)).map((r) => r.id), [agId])
+  await rejects(() => q(`update rental_agreements set monthly_rent=1 where id=$1`, [agId]).then((r) => { if (!r.length) throw new Error('no row') }), /./)
+  await as(T1); eq((await q(`select id from rental_agreements`)).length, 0, 'other tenant sees agreement')
+  await as(B); eq((await q(`select id from rental_agreements`)).length, 0, 'other owner sees agreement')
+})
+await t('agreement reminders fire once, then expiry marks the agreement expired', async () => {
+  await as(A); const r1 = (await q(`select public.run_my_reminders() r`))[0].r
+  eq(r1.agreements_expiring_7, 1)
+  const r2 = (await q(`select public.run_my_reminders() r`))[0].r
+  eq(r2.agreements_expiring_7, 0, 'sent twice')
+  await asDb(); await q(`update rental_agreements set expiry_date = current_date - 1 where id=$1`, [agId])
+  await as(A); const r3 = (await q(`select public.run_my_reminders() r`))[0].r
+  eq(r3.agreements_expired, 1)
+  eq((await q(`select status from rental_agreements where id=$1`, [agId]))[0].status, 'expired')
+})
+await t('renewing: only the owner, only active, new one starts the day after', async () => {
+  await asDb(); await q(`update rental_agreements set status='active', expiry_date = current_date + 20 where id=$1`, [agId])
+  await as(B); await rejects(() => q(`select public.renew_agreement($1, current_date + 400)`, [agId]), /not found/i)
+  await as(RT); await rejects(() => q(`select public.renew_agreement($1, current_date + 400)`, [agId]), /Only owners/)
+  await as(A); await rejects(() => q(`select public.renew_agreement($1, current_date + 10)`, [agId]), /must be after/)
+  const nid = (await q(`select public.renew_agreement($1, current_date + 385, 4500) id`, [agId]))[0].id
+  const rows = await q(`select id,status,monthly_rent::numeric,(start_date - current_date) s from rental_agreements where assignment_id=$1 order by start_date`, [asgR])
+  eq(rows.map((x) => x.status), ['renewed', 'active'])
+  eq(Number(rows[1].monthly_rent), 4500); eq(rows[1].s, 21)
+  await rejects(() => q(`select public.renew_agreement($1, current_date + 800)`, [agId]), /active/)
+  ok(nid)
+})
+await t('anonymous visitors cannot call the agreement functions', async () => {
+  await asAnon()
+  await rejects(() => q(`select public.renew_agreement($1, current_date + 400)`, [agId]), /permission denied/)
 })
 
 console.log(`\n${pass} passed, ${fail} failed`)

@@ -4,6 +4,7 @@ import { ProtectedRoute, RoleRedirect, FullPageSpinner } from '@/auth/ProtectedR
 import { AboutPage, ContactPage, FeaturesPage, Landing, LegalPage, PricingPage, PublicLayout } from '@/pages/PublicPages'
 import { ForgotPasswordPage, LoginPage, RegisterPage } from '@/pages/AuthPages'
 import ComingSoon from '@/pages/ComingSoon'
+import AgreementsPage from '@/pages/shared/Agreements'
 import NotificationsPage from '@/pages/NotificationsPage'
 import SettingsPage from '@/pages/SettingsPage'
 
@@ -77,6 +78,7 @@ export default function App() {
           <Route path="messages" element={<MessagesPage role="owner" />} />
           <Route path="announcements" element={<AnnouncementsPage role="owner" />} />
           <Route path="maintenance" element={<MaintenancePage role="owner" />} />
+          <Route path="agreements" element={<AgreementsPage role="owner" />} />
           <Route path="documents" element={<DocumentsPage role="owner" />} />
           <Route path="rent" element={<RentCollection />} />
           <Route path="invoices" element={<OwnerInvoices />} />
@@ -99,6 +101,7 @@ export default function App() {
           <Route path="announcements" element={<AnnouncementsPage role="tenant" />} />
           <Route path="pay" element={<PayRent />} />
           <Route path="maintenance" element={<MaintenancePage role="tenant" />} />
+          <Route path="agreements" element={<AgreementsPage role="tenant" />} />
           <Route path="documents" element={<DocumentsPage role="tenant" />} />
           <Route path="rent" element={<TenantRent />} />
           <Route path="payments" element={<TenantPayments />} />
