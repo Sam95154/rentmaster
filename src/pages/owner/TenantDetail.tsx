@@ -60,7 +60,7 @@ export default function TenantDetail() {
       <Link to="/owner/tenants" className="mb-3 inline-flex items-center gap-1 text-sm text-ink-soft hover:text-ink"><ArrowLeft className="h-4 w-4" />All tenants</Link>
       <PageHeader
         title={t.full_name}
-        description={t.user_id ? 'Has a RENTMASTER login' : t.status === 'invited' ? 'Invitation sent' : 'No login yet'}
+        description={t.user_id ? 'Has a RentMaster login' : t.status === 'invited' ? 'Invited: waiting for them to register' : 'No login yet'}
         actions={<>
           {!t.user_id && t.email && !archived && <Button variant="secondary" loading={invite.isPending} onClick={() => invite.mutate(t.id)}><Mail className="h-4 w-4" />Invite to login</Button>}
           <Button variant="secondary" onClick={() => setEdit(true)}><Pencil className="h-4 w-4" />Edit</Button>

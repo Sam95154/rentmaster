@@ -60,7 +60,7 @@ export default function AnnouncementsPage({ role }: { role: 'owner' | 'tenant' }
       ) : (<>
         <div className="space-y-3">{list.data?.rows.map((a) => (
           <Card key={a.id}><article className="p-5">
-            <div className="flex items-start justify-between gap-3"><div><h2 className="font-semibold text-ink">{a.title}</h2><p className="text-xs text-ink-mute">{a.owner_id === null ? 'From RENTMASTER · ' : ''}{formatDate(a.created_at)}</p></div>
+            <div className="flex items-start justify-between gap-3"><div><h2 className="font-semibold text-ink">{a.title}</h2><p className="text-xs text-ink-mute">{a.owner_id === null ? 'From RentMaster · ' : ''}{formatDate(a.created_at)}</p></div>
               {role === 'owner' && a.owner_id !== null && <Button size="sm" variant="ghost" aria-label={`Remove ${a.title}`} onClick={() => setDel(a)}><Trash2 className="h-4 w-4" /></Button>}</div>
             <p className="mt-2 whitespace-pre-wrap text-sm text-ink-soft">{a.body}</p>
           </article></Card>))}</div>

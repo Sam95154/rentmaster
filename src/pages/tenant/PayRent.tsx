@@ -54,7 +54,7 @@ export default function PayRent() {
       const { data, error } = await supabase.functions.invoke('create-razorpay-order', { body: { invoiceId: inv.id } })
       if (error) throw new Error(await fnError(error))
       const rz = new window.Razorpay!({
-        key: data.keyId, order_id: data.orderId, amount: data.amount, currency: data.currency, name: 'RENTMASTER', description: `Rent ${data.invoiceNumber}`,
+        key: data.keyId, order_id: data.orderId, amount: data.amount, currency: data.currency, name: 'RentMaster', description: `Rent ${data.invoiceNumber}`,
         prefill: { name: user?.full_name ?? undefined, email: user?.email ?? undefined, contact: user?.phone ?? undefined }, theme: { color: '#2563EB' },
         handler: () => setConfirming(inv.id),     // the browser callback is NOT proof of payment
         modal: { ondismiss: () => setBusy(null) },
@@ -82,7 +82,7 @@ export default function PayRent() {
           )
         })}</div>
       )}
-      <p className="mt-4 flex items-start gap-2 text-xs text-ink-mute"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />Payments are processed by Razorpay. Your card or UPI details never reach RENTMASTER. Your invoice is marked paid only after the bank confirms the payment.</p>
+      <p className="mt-4 flex items-start gap-2 text-xs text-ink-mute"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />Payments are processed by Razorpay. Your card or UPI details never reach RentMaster. Your invoice is marked paid only after the bank confirms the payment.</p>
     </>
   )
 }

@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, Loader2, type LucideIcon } from 'lucide-reac
 import { cn } from '@/lib/utils'
 
 const variants = {
-  primary: 'bg-brand text-white hover:bg-brand-600',
+  primary: 'bg-gradient-to-r from-brand to-[#7B5CF0] text-white shadow-sm hover:shadow-glow hover:brightness-110 active:scale-[0.98]',
   secondary: 'border border-line bg-white text-ink hover:bg-surface',
   danger: 'bg-danger text-white hover:bg-red-600',
   ghost: 'text-ink-soft hover:bg-surface',
@@ -25,7 +25,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       type="button"
       disabled={disabled || loading}
       className={cn(
-        'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition disabled:cursor-not-allowed disabled:opacity-60',
+        'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition duration-150 disabled:cursor-not-allowed disabled:opacity-60',
         size === 'sm' ? 'h-8 px-3 text-sm' : 'h-10 px-4 text-sm',
         variants[variant],
         className,
@@ -159,14 +159,14 @@ export function PageHeader({ title, description, actions }: { title: string; des
 
 export function StatCard({ label, value, hint, icon: Icon, tone = 'info' }: { label: string; value: ReactNode; hint?: string; icon: LucideIcon; tone?: Tone }) {
   return (
-    <Card className="p-4">
+    <Card className="p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-pop">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-wide text-ink-mute sm:truncate">{label}</p>
           <p className="mt-1 truncate text-xl font-semibold text-ink sm:text-2xl">{value}</p>
           {hint && <p className="mt-0.5 text-xs text-ink-mute sm:truncate">{hint}</p>}
         </div>
-        <span className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg', tone === 'success' ? 'bg-success-50 text-success' : tone === 'warning' ? 'bg-warning-50 text-warning' : tone === 'danger' ? 'bg-danger-50 text-danger' : 'bg-brand-50 text-brand')}>
+        <span className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg', 'text-white shadow-sm', tone === 'success' ? 'bg-gradient-to-br from-jade to-[#0E9C74]' : tone === 'warning' ? 'bg-gradient-to-br from-marigold to-[#F08A00]' : tone === 'danger' ? 'bg-gradient-to-br from-coral to-[#E0405F]' : 'bg-gradient-to-br from-[#7B5CF0] to-brand')}>
           <Icon className="h-5 w-5" aria-hidden />
         </span>
       </div>
@@ -215,9 +215,14 @@ export function Spinner({ className }: { className?: string }) {
 
 export function Logo({ light }: { light?: boolean }) {
   return (
-    <span className="inline-flex items-center gap-2 font-semibold tracking-tight">
-      <svg viewBox="0 0 32 32" className="h-8 w-8" aria-hidden><rect width="32" height="32" rx="8" fill={light ? '#2864D8' : '#14243A'} /><path d="M8 15.5 16 8l8 7.5V24h-5v-5h-6v5H8z" fill={light ? '#fff' : '#2864D8'} /></svg>
-      <span className={light ? 'text-white' : 'text-navy'}>RENTMASTER</span>
+    <span className="inline-flex items-center gap-2.5 font-display text-lg font-extrabold tracking-tight">
+      <svg viewBox="0 0 32 32" className="h-8 w-8 drop-shadow-sm" aria-hidden>
+        <polygon points="16,2 29,9.5 16,17 3,9.5" fill="#FFB020" />
+        <polygon points="3,9.5 16,17 16,30.5 3,23" fill="#5B3FE0" />
+        <polygon points="29,9.5 16,17 16,30.5 29,23" fill="#FF5C7A" />
+        <path d="M9 19.2v4.4l3 1.7v-4.4z" fill="#fff" opacity=".92" />
+      </svg>
+      <span className={light ? 'text-white' : 'text-navy'}>RentMaster</span>
     </span>
   )
 }

@@ -16,7 +16,7 @@ function SetupNotice() {
   return (
     <div className="flex min-h-screen items-center justify-center p-6">
       <div className="max-w-lg rounded-xl border border-line bg-white p-6 shadow-card">
-        <h1 className="text-lg font-semibold">Connect Supabase to start RENTMASTER</h1>
+        <h1 className="text-lg font-semibold">Connect Supabase to start RentMaster</h1>
         <p className="mt-2 text-sm text-ink-soft">Copy <code>.env.example</code> to <code>.env.local</code>, set <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code>, apply the SQL files in <code>supabase/migrations</code>, then restart the dev server. See README.md.</p>
       </div>
     </div>

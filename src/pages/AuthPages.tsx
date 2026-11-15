@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useQuery } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { MailCheck } from 'lucide-react'
+import { Tower3D } from '@/components/Scene3D'
 import { supabase } from '@/lib/supabase'
 import { errMsg } from '@/lib/errors'
 import { loginSchema, registerSchema, resetSchema } from '@/lib/schemas'
@@ -15,18 +16,21 @@ import { homePath, useAuth } from '@/auth/AuthProvider'
 function AuthLayout({ title, subtitle, children, footer }: { title: string; subtitle?: string; children: ReactNode; footer?: ReactNode }) {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-      <div className="hidden flex-col justify-between bg-navy p-10 text-white lg:flex">
-        <Link to="/"><Logo light /></Link>
-        <div>
-          <h2 className="text-3xl font-semibold leading-tight">Every property, tenant and rupee in one place.</h2>
+      <div className="relative hidden flex-col justify-between overflow-hidden bg-navy p-10 text-white lg:flex">
+        <div className="pointer-events-none absolute -left-20 top-0 h-72 w-72 animate-blob rounded-full bg-brand/60 blur-3xl" />
+        <div className="pointer-events-none absolute -right-10 bottom-10 h-72 w-72 animate-blob rounded-full bg-coral/40 blur-3xl" style={{ animationDelay: '-6s' }} />
+        <Link to="/" className="relative"><Logo light /></Link>
+        <Tower3D className="pointer-events-none absolute inset-x-0 top-1/4 h-[420px] scale-[0.8]" />
+        <div className="relative mt-auto">
+          <h2 className="text-3xl font-extrabold leading-tight">Every property, tenant and rupee in one place.</h2>
           <p className="mt-3 max-w-md text-white/70">Manage units, tenancies and rent with a secure, role-based platform built for owners and their tenants.</p>
+          <p className="mt-6 text-sm text-white/50">© {new Date().getFullYear()} RentMaster</p>
         </div>
-        <p className="text-sm text-white/50">© {new Date().getFullYear()} RENTMASTER</p>
       </div>
       <div className="flex items-center justify-center p-4 sm:p-8">
         <div className="w-full max-w-md">
           <Link to="/" className="mb-6 inline-block lg:hidden"><Logo /></Link>
-          <Card className="p-5 sm:p-7">
+          <Card className="p-5 shadow-pop sm:p-7">
             <h1 className="text-xl font-semibold text-ink">{title}</h1>
             {subtitle && <p className="mt-1 text-sm text-ink-soft">{subtitle}</p>}
             <div className="mt-5">{children}</div>
@@ -118,7 +122,7 @@ export function LoginPage() {
   }
 
   return (
-    <AuthLayout title="Sign in" subtitle="Welcome back to RENTMASTER." footer={<>New here? <Link to="/register" className="font-medium text-brand hover:underline">Create an account</Link></>}>
+    <AuthLayout title="Sign in" subtitle="Welcome back to RentMaster." footer={<>New here? <Link to="/register" className="font-medium text-brand hover:underline">Create an account</Link></>}>
       <form onSubmit={onSubmit} className="space-y-4" noValidate>
         <FormError message={error} />
         <Field label="Email" error={errors.email?.message}><Input type="email" autoComplete="email" invalid={!!errors.email} {...register('email')} /></Field>
