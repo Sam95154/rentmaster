@@ -66,9 +66,10 @@ const FEATURES: { icon: typeof Building2; title: string; text: string; status: '
   { icon: Building2, title: 'Properties and units', text: 'Manage buildings, floors and every rental unit with rent, deposit and status.', status: 'live' },
   { icon: Users, title: 'Tenants and tenancies', text: 'Add or invite tenants, assign them to units, transfer them and end tenancies safely.', status: 'live' },
   { icon: ShieldCheck, title: 'Private by design', text: 'Row-level security means one owner can never see another owner’s properties or tenants.', status: 'live' },
-  { icon: CreditCard, title: 'Rent and payments', text: 'Invoices, partial payments, receipts and online payment with verified webhooks.', status: 'soon' },
-  { icon: Wrench, title: 'Maintenance requests', text: 'Tenants raise requests with photos; owners assign, track and close them.', status: 'soon' },
-  { icon: FileSignature, title: 'Agreements and reports', text: 'Agreement expiry tracking, deposit ledger and exportable financial reports.', status: 'soon' },
+  { icon: CreditCard, title: 'Rent and payments', text: 'Invoices, partial payments, receipts and offline payment records. Online payment with verified webhooks is switched on once the owner platform connects Razorpay.', status: 'live' },
+  { icon: Wrench, title: 'Maintenance requests', text: 'Tenants raise requests with photos; owners assign, track and close them.', status: 'live' },
+  { icon: FileSignature, title: 'Deposits and reports', text: 'Deposit ledger, income and expense reports with CSV export.', status: 'live' },
+  { icon: FileSignature, title: 'Rental agreements', text: 'Agreement records, expiry tracking and renewal reminders.', status: 'soon' },
 ]
 
 export function Landing() {
