@@ -128,7 +128,7 @@ export function Landing() {
     <>
       <div className="relative min-h-[640px] overflow-hidden bg-navy text-white sm:min-h-[720px]">
         <HeroMedia className="absolute inset-0 h-full w-full" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy/90 via-navy/45 to-transparent sm:from-navy/85 sm:via-navy/30" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy/92 via-navy/60 to-navy/10 sm:from-navy/88 sm:via-navy/50" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-navy/80 to-transparent" />
         <Section className="relative flex min-h-[640px] items-center py-16 sm:min-h-[720px]">
           <div className="max-w-xl">
