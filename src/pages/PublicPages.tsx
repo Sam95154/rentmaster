@@ -104,9 +104,9 @@ const FAQ = [
 
 function SectionHead({ title, lede, className }: { title: string; lede?: string; className?: string }) {
   return (
-    <div className={cn('grid gap-3 lg:grid-cols-2 lg:items-end lg:gap-12', className)}>
-      <h2 className="text-3xl font-extrabold leading-tight text-ink sm:text-4xl">{title}</h2>
-      {lede && <p className="text-ink-soft lg:justify-self-end lg:text-lg">{lede}</p>}
+    <div className={cn('max-w-3xl', className)}>
+      <h2 className="font-serif text-4xl font-medium leading-[1.1] tracking-tight text-ink sm:text-5xl">{title}</h2>
+      {lede && <p className="mt-5 max-w-2xl text-lg leading-8 text-ink-soft">{lede}</p>}
     </div>
   )
 }
@@ -147,98 +147,88 @@ export function Landing() {
       {/* Hero */}
       <div className="relative overflow-hidden bg-navy text-white">
         <HeroMedia className="absolute inset-0 h-full w-full" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy/92 via-navy/60 to-navy/10 sm:from-navy/90 sm:via-navy/55" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-navy/90 to-transparent" />
-        <Section className="relative pb-0 pt-16 sm:pt-24">
-          <div className="max-w-2xl">
-            <h1 className="text-4xl font-extrabold leading-[1.08] sm:text-6xl">Run your rental properties with clarity and control.</h1>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-white/80">RentMaster brings rent collection, tenancy records, agreements and maintenance into one system for owners and property managers, and gives tenants a clear view of what they owe.</p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link to="/register"><button type="button" className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-brass px-6 text-base font-semibold text-navy transition hover:brightness-110 active:scale-[0.98] sm:w-auto">Create owner account<ArrowRight className="h-4 w-4" aria-hidden /></button></Link>
-              <Link to="/login"><button type="button" className="h-12 w-full rounded-lg border border-white/40 bg-white/5 px-6 text-base font-semibold text-white backdrop-blur transition hover:bg-white/15 sm:w-auto">Sign in</button></Link>
-            </div>
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy/90 via-navy/55 to-navy/10" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-navy to-transparent" />
+        <Section className="relative pb-10 pt-20 sm:pt-32">
+          <h1 className="max-w-3xl font-serif text-5xl font-medium leading-[1.04] tracking-tight sm:text-7xl">Rental management, handled with precision.</h1>
+          <p className="mt-7 max-w-xl text-lg leading-8 text-white/80">Collect rent, keep tenancy records and agreements, and resolve maintenance from a single system. Tenants see exactly what they owe.</p>
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <Link to="/register"><button type="button" className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-brass px-6 text-base font-semibold text-navy transition hover:brightness-110 active:scale-[0.98] sm:w-auto">Create owner account<ArrowRight className="h-4 w-4" aria-hidden /></button></Link>
+            <Link to="/login"><button type="button" className="h-12 w-full rounded-lg border border-white/40 px-6 text-base font-semibold text-white transition hover:bg-white/10 sm:w-auto">Sign in</button></Link>
           </div>
-          <ul className="mt-14 grid gap-px overflow-hidden rounded-t-xl bg-white/15 text-sm sm:mt-20 sm:grid-cols-3">
-            {[[KeyRound, 'Code-based verification', 'A one-time code is emailed at sign-up and password recovery.'], [LockKeyhole, 'Private by design', 'Every owner’s records are isolated at the database level.'], [ShieldCheck, 'Verified payments', 'Invoices are marked paid only after the gateway confirms.']].map(([Icon, t, d]) => {
-              const I = Icon as typeof KeyRound
-              return <li key={t as string} className="flex gap-3 bg-navy/75 p-5 backdrop-blur"><I className="mt-0.5 h-5 w-5 shrink-0 text-brass" aria-hidden /><div><p className="font-semibold text-white">{t as string}</p><p className="mt-0.5 text-white/70">{d as string}</p></div></li>
-            })}
-          </ul>
+          <dl className="mt-20 grid gap-6 border-t border-white/20 pt-6 text-sm sm:mt-32 sm:grid-cols-3 sm:gap-10">
+            {[['Verified by email code', 'A 6-digit code confirms sign-up and password recovery.'], ['Private by design', 'Each owner’s records are isolated in the database.'], ['Payments you can trust', 'An invoice is marked paid only after the gateway confirms it.']].map(([t, d]) => (
+              <div key={t}><dt className="font-semibold text-white">{t}</dt><dd className="mt-1 leading-6 text-white/65">{d}</dd></div>
+            ))}
+          </dl>
         </Section>
       </div>
 
       {/* Capabilities */}
-      <Section>
-        <Reveal><SectionHead title="Everything a rental portfolio needs, in one system" lede="From the first unit you add to the monthly report you hand your accountant, the records stay consistent and traceable." /></Reveal>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((f, i) => (
-            <Reveal key={f.title} delay={(i % 3) * 80}>
-              <div className="h-full rounded-xl border border-line bg-white p-6 shadow-card transition duration-200 hover:-translate-y-1 hover:shadow-pop">
-                <span className={cn('flex h-11 w-11 items-center justify-center rounded-lg', f.hue)}><f.icon className="h-5 w-5" aria-hidden /></span>
-                <h3 className="mt-4 text-lg font-bold text-ink">{f.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-ink-soft">{f.text}</p>
-              </div>
-            </Reveal>
-          ))}
+      <Section className="py-20 sm:py-28">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
+          <Reveal className="lg:sticky lg:top-28 lg:self-start"><SectionHead title="Everything a rental portfolio needs." lede="From the first unit you add to the monthly report you hand your accountant, the records stay consistent and traceable." /></Reveal>
+          <ul className="divide-y divide-line border-y border-line">
+            {FEATURES.map((f) => (
+              <li key={f.title} className="grid gap-2 py-6 sm:grid-cols-[13rem_1fr] sm:gap-8">
+                <h3 className="flex items-center gap-3 text-lg font-semibold text-ink"><f.icon className="h-5 w-5 shrink-0 text-brand" aria-hidden />{f.title}</h3>
+                <p className="leading-7 text-ink-soft">{f.text}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </Section>
 
       {/* Product preview */}
       <div className="bg-surface">
-        <Section>
-          <Reveal><SectionHead title="Your whole portfolio on one screen" lede="Collections, outstanding rent, occupancy and open maintenance requests are visible the moment you sign in." /></Reveal>
-          <Reveal className="mt-10"><DashboardMock /></Reveal>
+        <Section className="py-20 sm:py-28">
+          <Reveal><SectionHead title="Your whole portfolio on one screen." lede="Collections, outstanding rent, occupancy and open maintenance requests are visible the moment you sign in." /></Reveal>
+          <Reveal className="mt-14"><DashboardMock /></Reveal>
         </Section>
       </div>
 
       {/* Roles */}
-      <Section>
-        <Reveal><SectionHead title="Built for everyone involved in a tenancy" lede="Owners and tenants sign in on the same page and each lands in a panel designed for their role." /></Reveal>
-        <div className="mt-10 grid gap-5 md:mx-auto md:max-w-4xl md:grid-cols-2">
-          {ROLES.map((r, i) => (
-            <Reveal key={r.title} delay={i * 100}>
-              <div className="flex h-full flex-col rounded-xl border border-line bg-white p-6 shadow-card">
-                <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-navy text-brass"><r.icon className="h-5 w-5" aria-hidden /></span>
-                <h3 className="mt-4 text-xl font-bold text-ink">{r.title}</h3>
-                <p className="mt-1 text-ink-soft">{r.line}</p>
-                <ul className="mt-4 flex-1 space-y-2 text-sm text-ink-soft">
-                  {r.points.map((p) => <li key={p} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass" aria-hidden />{p}</li>)}
-                </ul>
-                <Link to={r.to} className="mt-6 inline-flex w-fit items-center gap-2 text-sm font-semibold text-brand hover:gap-3 hover:underline">{r.cta}<ArrowRight className="h-4 w-4 transition-all" aria-hidden /></Link>
-              </div>
-            </Reveal>
+      <Section className="py-20 sm:py-28">
+        <Reveal><SectionHead title="One platform for owners and their tenants." lede="Both sign in on the same page and each lands in a panel designed for their role." /></Reveal>
+        <div className="mt-14 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-2">
+          {ROLES.map((r) => (
+            <div key={r.title} className="flex flex-col bg-white p-8 sm:p-10">
+              <h3 className="font-serif text-3xl font-medium tracking-tight text-ink">{r.title}</h3>
+              <p className="mt-2 text-ink-soft">{r.line}</p>
+              <ul className="mt-6 flex-1 space-y-3 text-ink-soft">
+                {r.points.map((p) => <li key={p} className="flex gap-3"><Check className="mt-1 h-4 w-4 shrink-0 text-brand" aria-hidden />{p}</li>)}
+              </ul>
+              <Link to={r.to} className="mt-8 inline-flex w-fit items-center gap-2 font-semibold text-brand hover:gap-3 hover:underline">{r.cta}<ArrowRight className="h-4 w-4 transition-all" aria-hidden /></Link>
+            </div>
           ))}
         </div>
       </Section>
 
       {/* How it works */}
       <div className="bg-surface">
-        <Section>
-          <Reveal><SectionHead title="Up and running in three steps" lede="Most owners finish their first property and tenant in a few minutes." /></Reveal>
-          <Reveal className="relative mt-12">
-            <div className="draw absolute left-[16.6%] right-[16.6%] top-6 hidden h-px bg-line md:block" />
-            <ol className="grid gap-10 md:grid-cols-3">
-              {STEPS.map(([t, d], i) => (
-                <li key={t} className="relative text-center">
-                  <span className="pop mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-navy font-display text-lg font-extrabold text-brass shadow-pop" style={{ animationDelay: `${i * 200}ms` }}>{i + 1}</span>
-                  <h3 className="mt-4 text-lg font-bold text-ink">{t}</h3>
-                  <p className="mx-auto mt-2 max-w-xs text-sm leading-6 text-ink-soft">{d}</p>
-                </li>
-              ))}
-            </ol>
-          </Reveal>
+        <Section className="py-20 sm:py-28">
+          <Reveal><SectionHead title="Set up in three steps." lede="Most owners finish their first property and tenant in a few minutes." /></Reveal>
+          <ol className="mt-14 grid gap-10 md:grid-cols-3 md:gap-12">
+            {STEPS.map(([t, d], i) => (
+              <li key={t} className="border-t-2 border-ink pt-5">
+                <span className="font-serif text-5xl font-medium text-brand">{i + 1}</span>
+                <h3 className="mt-3 text-xl font-semibold text-ink">{t}</h3>
+                <p className="mt-2 leading-7 text-ink-soft">{d}</p>
+              </li>
+            ))}
+          </ol>
         </Section>
       </div>
 
       {/* Security */}
       <div className="bg-navy text-white">
-        <Section>
-          <Reveal><SectionHead title="Security and accuracy are built in, not added on" lede="Rent records are financial records. The controls that protect them run on the server, not in the browser." className="[&_h2]:text-white [&_p]:text-white/70" /></Reveal>
-          <div className="mt-10 grid gap-px overflow-hidden rounded-xl bg-white/10 sm:grid-cols-2">
+        <Section className="py-20 sm:py-28">
+          <Reveal><SectionHead title="Built to protect financial records." lede="The controls that protect your data run on the server, not in the browser." className="[&_h2]:text-white [&_p]:text-white/70" /></Reveal>
+          <div className="mt-14 grid gap-x-16 gap-y-10 sm:grid-cols-2">
             {SECURITY.map((s) => (
-              <div key={s.title} className="flex gap-4 bg-navy p-6">
-                <s.icon className="mt-0.5 h-6 w-6 shrink-0 text-brass" aria-hidden />
-                <div><h3 className="font-bold text-white">{s.title}</h3><p className="mt-1 text-sm leading-6 text-white/70">{s.text}</p></div>
+              <div key={s.title} className="border-t border-white/20 pt-5">
+                <h3 className="flex items-center gap-3 text-lg font-semibold"><s.icon className="h-5 w-5 text-brass" aria-hidden />{s.title}</h3>
+                <p className="mt-2 leading-7 text-white/70">{s.text}</p>
               </div>
             ))}
           </div>
@@ -246,33 +236,31 @@ export function Landing() {
       </div>
 
       {/* FAQ */}
-      <Section className="max-w-4xl">
-        <Reveal><h2 className="text-3xl font-extrabold text-ink sm:text-4xl">Frequently asked questions</h2></Reveal>
-        <div className="mt-8 divide-y divide-line rounded-xl border border-line bg-white shadow-card">
-          {FAQ.map(([q, a]) => (
-            <details key={q} className="group px-5 py-4 open:bg-surface/60">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink [&::-webkit-details-marker]:hidden">{q}<span className="text-xl text-ink-mute transition group-open:rotate-45" aria-hidden>+</span></summary>
-              <p className="mt-3 max-w-3xl text-sm leading-6 text-ink-soft">{a}</p>
-            </details>
-          ))}
+      <Section className="py-20 sm:py-28">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
+          <h2 className="font-serif text-4xl font-medium leading-[1.1] tracking-tight text-ink sm:text-5xl">Common questions.</h2>
+          <div className="divide-y divide-line border-y border-line">
+            {FAQ.map(([q, a]) => (
+              <details key={q} className="group py-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold text-ink [&::-webkit-details-marker]:hidden">{q}<span className="text-2xl font-normal text-ink-mute transition group-open:rotate-45" aria-hidden>+</span></summary>
+                <p className="mt-3 max-w-2xl leading-7 text-ink-soft">{a}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </Section>
 
       {/* Closing call to action */}
-      <Section className="pt-0">
-        <Reveal>
-          <div className="rounded-2xl bg-gradient-to-br from-[#0e1621] via-[#26344a] to-[#8f6a45] p-8 text-white shadow-pop sm:p-12 lg:flex lg:items-center lg:justify-between lg:gap-10">
-            <div className="max-w-xl">
-              <h2 className="text-3xl font-extrabold sm:text-4xl">Bring your rentals into one reliable system.</h2>
-              <p className="mt-3 text-white/85">Create your owner account, add your first property and invite your tenants today.</p>
-            </div>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row lg:mt-0 lg:shrink-0">
-              <Link to="/register"><button type="button" className="h-12 w-full rounded-lg bg-brass px-6 text-base font-semibold text-navy transition hover:brightness-110 active:scale-[0.98] sm:w-auto">Create owner account</button></Link>
-              <Link to="/features"><button type="button" className="h-12 w-full rounded-lg border border-white/50 px-6 text-base font-semibold text-white transition hover:bg-white/15 sm:w-auto">View all features</button></Link>
-            </div>
+      <div className="bg-navy text-white">
+        <Section className="py-20 text-center sm:py-24">
+          <h2 className="mx-auto max-w-2xl font-serif text-4xl font-medium leading-[1.1] tracking-tight sm:text-5xl">Bring your rentals into one reliable system.</h2>
+          <p className="mx-auto mt-5 max-w-xl text-lg text-white/70">Create your owner account, add your first property and invite your tenants today.</p>
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link to="/register"><button type="button" className="h-12 w-full rounded-lg bg-brass px-6 text-base font-semibold text-navy transition hover:brightness-110 active:scale-[0.98] sm:w-auto">Create owner account</button></Link>
+            <Link to="/features"><button type="button" className="h-12 w-full rounded-lg border border-white/40 px-6 text-base font-semibold text-white transition hover:bg-white/10 sm:w-auto">View all features</button></Link>
           </div>
-        </Reveal>
-      </Section>
+        </Section>
+      </div>
     </>
   )
 }
@@ -280,7 +268,7 @@ export function Landing() {
 export function FeaturesPage() {
   return (
     <Section>
-      <h1 className="text-3xl font-semibold text-ink">Features</h1>
+      <h1 className="font-serif text-4xl font-medium tracking-tight text-ink sm:text-5xl">Features</h1>
       <p className="mt-2 max-w-2xl text-ink-soft">What works today and what is on the roadmap.</p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {FEATURES.map((f) => (
