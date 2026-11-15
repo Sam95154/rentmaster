@@ -84,7 +84,7 @@ export function AppShell({ nav, base, kind, search }: { nav: NavItem[]; base: st
     <div className="min-h-screen">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[70] focus:rounded-lg focus:bg-white focus:px-3 focus:py-2">Skip to content</a>
 
-      <aside className={cn('fixed inset-y-0 left-0 z-30 hidden flex-col print:!hidden bg-gradient-to-b from-navy to-navy-700 transition-[width] duration-200 lg:flex', collapsed ? 'w-[72px]' : 'w-64')}>
+      <aside className={cn('fixed inset-y-0 left-0 z-30 hidden flex-col print:!hidden bg-navy transition-[width] duration-200 lg:flex', collapsed ? 'w-[72px]' : 'w-64')}>
         <div className={cn('flex h-16 items-center border-b border-white/10 px-4', collapsed && 'justify-center px-0')}>
           {collapsed ? <Logo light /> : <Link to={base}><Logo light /></Link>}
         </div>
@@ -98,7 +98,7 @@ export function AppShell({ nav, base, kind, search }: { nav: NavItem[]; base: st
       {drawer && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <button type="button" aria-label="Close menu" className="absolute inset-0 bg-navy/60" onClick={() => setDrawer(false)} />
-          <aside className="absolute inset-y-0 left-0 flex w-72 max-w-[85%] flex-col bg-gradient-to-b from-navy to-navy-700">
+          <aside className="absolute inset-y-0 left-0 flex w-72 max-w-[85%] flex-col bg-navy">
             <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
               <Logo light />
               <button type="button" aria-label="Close menu" onClick={() => setDrawer(false)} className="rounded-md p-1 text-white/70 hover:bg-white/10"><X className="h-5 w-5" /></button>

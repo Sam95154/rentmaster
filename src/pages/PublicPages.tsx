@@ -1,13 +1,13 @@
-import { useState, type ReactNode } from 'react'
+import { lazy, Suspense, useState, type ReactNode } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowRight, Building2, Check, CreditCard, FileSignature, KeyRound, Menu, ShieldCheck, Sparkles, UserCog, Users, Wrench, X } from 'lucide-react'
+import { ArrowRight, Building2, Check, CreditCard, FileSignature, KeyRound, Menu, ShieldCheck, UserCog, Users, Wrench, X } from 'lucide-react'
 import { Badge, Button, Card, Logo, Skeleton } from '@/components/ui'
 import { supabase } from '@/lib/supabase'
 import { formatINR } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 import { Reveal, useTilt } from '@/lib/motion'
-import { HeroScene } from '@/components/Scene3D'
+
 
 const LINKS = [
   { to: '/features', label: 'Features' },
@@ -64,59 +64,57 @@ function Section({ children, className }: { children: ReactNode; className?: str
   return <section className={cn('mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16', className)}>{children}</section>
 }
 
+const CityScene = lazy(() => import('@/components/CityScene'))
+
 const FEATURES: { icon: typeof Building2; title: string; text: string; status: 'live' | 'soon'; hue: string }[] = [
-  { icon: Building2, title: 'Properties and units', text: 'Manage buildings, floors and every rental unit with rent, deposit and status.', status: 'live', hue: 'from-brand to-[#7B5CF0]' },
-  { icon: Users, title: 'Tenants and tenancies', text: 'Add tenants, assign them to units, transfer them and end tenancies safely.', status: 'live', hue: 'from-coral to-[#E0405F]' },
-  { icon: ShieldCheck, title: 'Private by design', text: 'Row-level security means one owner can never see another owner’s properties or tenants.', status: 'live', hue: 'from-jade to-[#0E9C74]' },
-  { icon: CreditCard, title: 'Rent and payments', text: 'Invoices, partial payments, receipts and offline payment records. Online payment with verified webhooks is switched on once Razorpay is connected.', status: 'live', hue: 'from-marigold to-[#F08A00]' },
-  { icon: Wrench, title: 'Maintenance requests', text: 'Tenants raise requests with photos; owners assign, track and close them.', status: 'live', hue: 'from-sky to-[#1E8FE0]' },
-  { icon: FileSignature, title: 'Deposits and reports', text: 'Deposit ledger, income and expense reports with CSV export.', status: 'live', hue: 'from-brand to-coral' },
-  { icon: KeyRound, title: 'Rental agreements', text: 'Agreement records, expiry tracking and renewal reminders.', status: 'live', hue: 'from-jade to-sky' },
+  { icon: Building2, title: 'Properties and units', text: 'Manage buildings, floors and every rental unit with rent, deposit and status.', status: 'live', hue: 'bg-brand-50 text-brand' },
+  { icon: Users, title: 'Tenants and tenancies', text: 'Add tenants, assign them to units, transfer them and end tenancies safely.', status: 'live', hue: 'bg-brand-50 text-brand' },
+  { icon: ShieldCheck, title: 'Private by design', text: 'Row-level security means one owner can never see another owner’s properties or tenants.', status: 'live', hue: 'bg-brand-50 text-brand' },
+  { icon: CreditCard, title: 'Rent and payments', text: 'Invoices, partial payments, receipts and offline payment records. Online payment with verified webhooks is switched on once Razorpay is connected.', status: 'live', hue: 'bg-brand-50 text-brand' },
+  { icon: Wrench, title: 'Maintenance requests', text: 'Tenants raise requests with photos; owners assign, track and close them.', status: 'live', hue: 'bg-brand-50 text-brand' },
+  { icon: FileSignature, title: 'Deposits and reports', text: 'Deposit ledger, income and expense reports with CSV export.', status: 'live', hue: 'bg-brand-50 text-brand' },
+  { icon: KeyRound, title: 'Rental agreements', text: 'Agreement records, expiry tracking and renewal reminders.', status: 'live', hue: 'bg-brand-50 text-brand' },
 ]
 
-const TAPE = [
-  ['Rent invoices', 'bg-brand'], ['Partial payments', 'bg-coral'], ['Receipts', 'bg-marigold'], ['Security deposits', 'bg-jade'], ['Maintenance requests', 'bg-sky'],
-  ['Agreements', 'bg-brand'], ['Reports', 'bg-coral'], ['Announcements', 'bg-marigold'], ['Messages', 'bg-jade'], ['Expenses', 'bg-sky'],
-] as const
+const TAPE = ['Rent invoices', 'Partial payments', 'Receipts', 'Security deposits', 'Maintenance requests', 'Agreements', 'Reports', 'Announcements', 'Messages', 'Expenses']
 
-function RoleCard({ title, line, points, grad, icon: Icon, to, cta }: { title: string; line: string; points: string[]; grad: string; icon: typeof Building2; to: string; cta: string }) {
-  const tilt = useTilt<HTMLDivElement>(9)
+function RoleCard({ title, line, points, icon: Icon, to, cta }: { title: string; line: string; points: string[]; icon: typeof Building2; to: string; cta: string }) {
+  const tilt = useTilt<HTMLDivElement>(4)
   return (
-    <div ref={tilt.ref} onMouseMove={tilt.onMouseMove} onMouseLeave={tilt.onMouseLeave} className={cn('tilt relative flex h-full flex-col overflow-hidden rounded-3xl bg-gradient-to-br p-6 text-white shadow-pop sm:p-7', grad)}>
-      <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/15" />
-      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur" style={{ transform: 'translateZ(40px)' }}><Icon className="h-6 w-6" aria-hidden /></span>
-      <h3 className="mt-5 text-2xl font-extrabold" style={{ transform: 'translateZ(30px)' }}>{title}</h3>
-      <p className="mt-1 font-medium text-white/90" style={{ transform: 'translateZ(20px)' }}>{line}</p>
-      <ul className="mt-4 flex-1 space-y-2 text-sm font-medium text-white/95">
-        {points.map((p) => <li key={p} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />{p}</li>)}
+    <div ref={tilt.ref} onMouseMove={tilt.onMouseMove} onMouseLeave={tilt.onMouseLeave} className="tilt flex h-full flex-col rounded-2xl border border-line bg-white p-6 shadow-card transition-shadow duration-200 hover:shadow-pop sm:p-7">
+      <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy text-brass"><Icon className="h-6 w-6" aria-hidden /></span>
+      <h3 className="mt-5 text-2xl font-extrabold text-ink">{title}</h3>
+      <p className="mt-1 font-medium text-ink-soft">{line}</p>
+      <ul className="mt-4 flex-1 space-y-2 text-sm text-ink-soft">
+        {points.map((p) => <li key={p} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brass" aria-hidden />{p}</li>)}
       </ul>
-      <Link to={to} className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-navy transition hover:gap-3 hover:shadow-pop" style={{ transform: 'translateZ(30px)' }}>{cta}<ArrowRight className="h-4 w-4" aria-hidden /></Link>
+      <Link to={to} className="mt-6 inline-flex w-fit items-center gap-2 rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:gap-3 hover:bg-navy-600">{cta}<ArrowRight className="h-4 w-4" aria-hidden /></Link>
     </div>
   )
 }
 
 function DashboardMock() {
-  const tilt = useTilt<HTMLDivElement>(5, 'perspective(1400px) rotateX(5deg) rotateY(-7deg)')
+  const tilt = useTilt<HTMLDivElement>(4, 'perspective(1400px) rotateX(4deg) rotateY(-5deg)')
   const bars = [38, 52, 44, 66, 58, 80, 72, 94]
-  const kpis = [['Collected', '₹1,24,000', 'from-jade to-[#0E9C74]'], ['Due this month', '₹36,000', 'from-marigold to-[#F08A00]'], ['Occupied units', '18 / 20', 'from-brand to-[#7B5CF0]'], ['Open requests', '3', 'from-coral to-[#E0405F]']]
+  const kpis = [['Collected', '₹1,24,000'], ['Due this month', '₹36,000'], ['Occupied units', '18 / 20'], ['Open requests', '3']]
   return (
-    <div ref={tilt.ref} onMouseMove={tilt.onMouseMove} onMouseLeave={tilt.onMouseLeave} className="tilt mx-auto w-full max-w-4xl overflow-hidden rounded-2xl border border-white/60 bg-white shadow-[0_30px_80px_rgba(30,27,75,0.28)]" style={{ transform: 'perspective(1400px) rotateX(5deg) rotateY(-7deg)' }}>
-      <div className="flex items-center gap-1.5 bg-navy px-4 py-2.5"><span className="h-3 w-3 rounded-full bg-coral" /><span className="h-3 w-3 rounded-full bg-marigold" /><span className="h-3 w-3 rounded-full bg-jade" /><span className="ml-3 rounded-md bg-white/10 px-3 py-0.5 text-xs text-white/70">Sample data</span></div>
-      <div className="grid gap-4 p-4 sm:grid-cols-4 sm:p-6">
-        {kpis.map(([l, v, g]) => (
-          <div key={l} className={cn('rounded-xl bg-gradient-to-br p-4 text-white', g)}><p className="text-xs font-medium text-white/85">{l}</p><p className="mt-1 font-display text-xl font-extrabold">{v}</p></div>
+    <div ref={tilt.ref} onMouseMove={tilt.onMouseMove} onMouseLeave={tilt.onMouseLeave} className="tilt mx-auto w-full max-w-4xl overflow-hidden rounded-xl border border-line bg-white shadow-[0_30px_80px_rgba(14,22,33,0.25)]" style={{ transform: 'perspective(1400px) rotateX(4deg) rotateY(-5deg)' }}>
+      <div className="flex items-center gap-1.5 bg-navy px-4 py-2.5"><span className="h-3 w-3 rounded-full bg-white/25" /><span className="h-3 w-3 rounded-full bg-white/25" /><span className="h-3 w-3 rounded-full bg-white/25" /><span className="ml-3 rounded-md bg-white/10 px-3 py-0.5 text-xs text-white/70">Sample data</span></div>
+      <div className="grid gap-4 bg-surface p-4 sm:grid-cols-4 sm:p-6">
+        {kpis.map(([l, v], i) => (
+          <div key={l} className="rounded-lg border border-line bg-white p-4"><p className="text-xs font-medium text-ink-mute">{l}</p><p className={cn('mt-1 font-display text-xl font-extrabold', i === 3 ? 'text-coral' : 'text-ink')}>{v}</p></div>
         ))}
-        <div className="rounded-xl border border-line p-4 sm:col-span-3">
+        <div className="rounded-lg border border-line bg-white p-4 sm:col-span-3">
           <p className="text-sm font-semibold text-ink">Rent collected, last 8 months</p>
           <div className="mt-4 flex h-36 items-end gap-2 sm:gap-3">
-            {bars.map((h, i) => <div key={i} className="bar flex-1 rounded-t-md bg-gradient-to-t from-brand to-coral" style={{ height: `${h}%`, animationDelay: `${i * 90}ms` }} />)}
+            {bars.map((h, i) => <div key={i} className={cn('bar flex-1 rounded-t', i === bars.length - 1 ? 'bg-brass' : 'bg-brand')} style={{ height: `${h}%`, animationDelay: `${i * 90}ms` }} />)}
           </div>
         </div>
-        <div className="rounded-xl border border-line p-4">
+        <div className="rounded-lg border border-line bg-white p-4">
           <p className="text-sm font-semibold text-ink">Today</p>
-          <ul className="mt-3 space-y-3 text-sm">
-            <li className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-jade" />Payment received</li>
-            <li className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-marigold" />Invoice due</li>
+          <ul className="mt-3 space-y-3 text-sm text-ink-soft">
+            <li className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-success" />Payment received</li>
+            <li className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-brass" />Invoice due</li>
             <li className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-coral" />Leak reported</li>
           </ul>
         </div>
@@ -128,30 +126,28 @@ function DashboardMock() {
 export function Landing() {
   return (
     <>
-      <div className="relative overflow-hidden bg-navy text-white">
-        <div className="pointer-events-none absolute -left-24 top-10 h-80 w-80 animate-blob rounded-full bg-brand/60 blur-3xl" />
-        <div className="pointer-events-none absolute right-0 top-0 h-72 w-72 animate-blob rounded-full bg-coral/40 blur-3xl" style={{ animationDelay: '-5s' }} />
-        <div className="pointer-events-none absolute -bottom-16 left-1/3 h-72 w-72 animate-blob rounded-full bg-jade/30 blur-3xl" style={{ animationDelay: '-9s' }} />
-        <Section className="relative grid items-center gap-8 py-12 sm:py-20 lg:grid-cols-2">
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm font-medium text-white/90 ring-1 ring-white/20"><Sparkles className="h-4 w-4 text-marigold" aria-hidden />Rental management for India</span>
-            <h1 className="mt-5 text-4xl font-extrabold leading-[1.05] sm:text-6xl">Rent, tenants and properties in one place.</h1>
-            <p className="mt-5 max-w-lg text-lg text-white/75">Send invoices, record payments, track agreements and answer maintenance requests. Owners, tenants and admins each get their own panel.</p>
+      <div className="relative min-h-[640px] overflow-hidden bg-navy text-white sm:min-h-[720px]">
+        <Suspense fallback={null}><CityScene className="absolute inset-0" /></Suspense>
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy/90 via-navy/45 to-transparent sm:from-navy/85 sm:via-navy/30" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-navy/80 to-transparent" />
+        <Section className="relative flex min-h-[640px] items-center py-16 sm:min-h-[720px]">
+          <div className="max-w-xl">
+            <h1 className="text-4xl font-extrabold leading-[1.06] sm:text-6xl">Rent, tenants and properties in one place.</h1>
+            <p className="mt-5 max-w-lg text-lg text-white/80">Send invoices, record payments, track agreements and answer maintenance requests. Owners, tenants and admins each get their own panel.</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link to="/register"><Button className="h-12 w-full px-6 text-base sm:w-auto">Create free account<ArrowRight className="h-4 w-4" aria-hidden /></Button></Link>
-              <Link to="/login"><Button variant="secondary" className="h-12 w-full border-white/30 bg-white/10 px-6 text-base text-white hover:bg-white/20 sm:w-auto">Sign in</Button></Link>
+              <Link to="/register"><button type="button" className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-brass px-6 text-base font-semibold text-navy transition hover:brightness-110 active:scale-[0.98] sm:w-auto">Create free account<ArrowRight className="h-4 w-4" aria-hidden /></button></Link>
+              <Link to="/login"><button type="button" className="h-12 w-full rounded-lg border border-white/40 bg-white/5 px-6 text-base font-semibold text-white backdrop-blur transition hover:bg-white/15 sm:w-auto">Sign in</button></Link>
             </div>
-            <p className="mt-5 flex items-center gap-2 text-sm text-white/65"><KeyRound className="h-4 w-4" aria-hidden />Sign in with a 6-digit code sent to your email. No links to click.</p>
+            <p className="mt-5 flex items-center gap-2 text-sm text-white/70"><KeyRound className="h-4 w-4" aria-hidden />Sign in with a 6-digit code sent to your email. No links to click.</p>
           </div>
-          <HeroScene />
         </Section>
       </div>
 
-      <div className="overflow-hidden border-y border-line bg-white py-4" aria-label="What RentMaster covers">
-        <div className="flex w-max animate-marquee gap-4">
+      <div className="overflow-hidden border-b border-line bg-white py-4" aria-label="What RentMaster covers">
+        <div className="flex w-max animate-marquee gap-8">
           {[0, 1].map((k) => (
-            <div key={k} className="flex shrink-0 gap-4" aria-hidden={k === 1}>
-              {TAPE.map(([t, c]) => <span key={`${k}${t}`} className="inline-flex items-center gap-2 rounded-full bg-surface px-4 py-2 text-sm font-semibold text-ink"><span className={cn('h-2.5 w-2.5 rounded-full', c)} />{t}</span>)}
+            <div key={k} className="flex shrink-0 gap-8" aria-hidden={k === 1}>
+              {TAPE.map((t) => <span key={`${k}${t}`} className="inline-flex items-center gap-3 text-sm font-semibold text-ink-soft"><span className="h-1.5 w-1.5 rounded-full bg-brass" />{t}</span>)}
             </div>
           ))}
         </div>
@@ -163,20 +159,20 @@ export function Landing() {
           <p className="mt-2 max-w-xl text-ink-soft">Everyone signs in at the same page and lands in the panel made for them.</p>
         </Reveal>
         <div className="mt-8 grid gap-5 md:grid-cols-3">
-          <Reveal><RoleCard title="Owners" line="Stop chasing rent." grad="from-brand to-[#7B5CF0]" icon={Building2} to="/register" cta="Create an owner account"
+          <Reveal><RoleCard title="Owners" line="Stop chasing rent." icon={Building2} to="/register" cta="Create an owner account"
             points={['Properties, units and tenants', 'Invoices, payments and receipts', 'Agreements with renewal reminders']} /></Reveal>
-          <Reveal delay={120}><RoleCard title="Tenants" line="Know what you owe." grad="from-[#FF5C7A] to-[#D93A63]" icon={Users} to="/register" cta="Register with your owner’s email"
+          <Reveal delay={120}><RoleCard title="Tenants" line="Know what you owe." icon={Users} to="/register" cta="Register with your owner’s email"
             points={['Your rent, receipts and deposit', 'Raise maintenance requests with photos', 'Message your owner']} /></Reveal>
-          <Reveal delay={240}><RoleCard title="Admins" line="Run the platform." grad="from-[#0FA37A] to-[#0A7F68]" icon={UserCog} to="/login" cta="Admin sign in"
+          <Reveal delay={240}><RoleCard title="Admins" line="Run the platform." icon={UserCog} to="/login" cta="Admin sign in"
             points={['Owners, plans and transactions', 'Support tickets and announcements', 'Audit logs and platform settings']} /></Reveal>
         </div>
       </Section>
 
-      <div className="bg-gradient-to-b from-surface to-white">
+      <div className="bg-surface">
         <Section>
           <Reveal className="text-center">
             <h2 className="text-3xl font-extrabold text-ink sm:text-4xl">See your whole portfolio at a glance</h2>
-            <p className="mx-auto mt-2 max-w-xl text-ink-soft">Collections, dues, occupancy and open requests on one screen. Move your mouse over it.</p>
+            <p className="mx-auto mt-2 max-w-xl text-ink-soft">Collections, dues, occupancy and open requests on one screen.</p>
           </Reveal>
           <Reveal className="mt-10"><DashboardMock /></Reveal>
         </Section>
@@ -187,8 +183,8 @@ export function Landing() {
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f, i) => (
             <Reveal key={f.title} delay={(i % 3) * 90}>
-              <div className="group h-full rounded-2xl border border-line bg-white p-5 shadow-card transition duration-200 hover:-translate-y-1.5 hover:shadow-pop">
-                <span className={cn('flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-sm transition duration-300 group-hover:rotate-6 group-hover:scale-110', f.hue)}><f.icon className="h-6 w-6" aria-hidden /></span>
+              <div className="group h-full rounded-xl border border-line bg-white p-5 shadow-card transition duration-200 hover:-translate-y-1 hover:shadow-pop">
+                <span className={cn('flex h-11 w-11 items-center justify-center rounded-lg transition duration-300 group-hover:scale-110', f.hue)}><f.icon className="h-5 w-5" aria-hidden /></span>
                 <h3 className="mt-4 text-lg font-bold text-ink">{f.title}</h3>
                 <p className="mt-1 text-sm text-ink-soft">{f.text}</p>
               </div>
@@ -200,11 +196,11 @@ export function Landing() {
       <Section className="pt-0">
         <Reveal><h2 className="text-3xl font-extrabold text-ink sm:text-4xl">Start in three steps</h2></Reveal>
         <Reveal className="relative mt-10">
-          <div className="draw absolute left-[16%] right-[16%] top-7 hidden h-1 rounded-full bg-gradient-to-r from-brand via-coral to-jade md:block" />
+          <div className="draw absolute left-[16%] right-[16%] top-7 hidden h-px bg-line md:block" />
           <ol className="grid gap-8 md:grid-cols-3">
-            {[['Add your property', 'List the building and its units with rent and deposit.', 'bg-brand'], ['Assign a tenant', 'Add the tenant’s email. They register and see their own panel.', 'bg-coral'], ['Collect rent', 'Invoices are created, payments recorded and receipts issued.', 'bg-jade']].map(([t, d, c], i) => (
+            {[['Add your property', 'List the building and its units with rent and deposit.'], ['Assign a tenant', 'Add the tenant’s email. They register and see their own panel.'], ['Collect rent', 'Invoices are created, payments recorded and receipts issued.']].map(([t, d], i) => (
               <li key={t} className="relative text-center">
-                <span className={cn('pop mx-auto flex h-14 w-14 items-center justify-center rounded-full font-display text-xl font-extrabold text-white shadow-pop', c)} style={{ animationDelay: `${i * 220}ms` }}>{i + 1}</span>
+                <span className="pop mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-navy font-display text-xl font-extrabold text-brass shadow-pop" style={{ animationDelay: `${i * 220}ms` }}>{i + 1}</span>
                 <h3 className="mt-4 text-lg font-bold text-ink">{t}</h3>
                 <p className="mx-auto mt-1 max-w-xs text-sm text-ink-soft">{d}</p>
               </li>
@@ -215,14 +211,11 @@ export function Landing() {
 
       <Section className="pt-0">
         <Reveal>
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand via-[#7B5CF0] to-coral p-8 text-white shadow-glow sm:p-14">
-            <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 animate-float rounded-full bg-marigold/70" />
-            <div className="pointer-events-none absolute bottom-6 right-24 h-16 w-16 animate-float-slow rounded-2xl bg-white/25" style={{ transform: 'rotate(18deg)' }} />
-            <div className="pointer-events-none absolute -bottom-10 left-1/3 h-32 w-32 animate-float rounded-full bg-jade/60" style={{ animationDelay: '-3s' }} />
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0e1621] via-[#33425a] to-[#b98350] p-8 text-white shadow-pop sm:p-14">
             <h2 className="relative max-w-xl text-3xl font-extrabold sm:text-4xl">Ready to run your rentals the easy way?</h2>
-            <p className="relative mt-2 max-w-md text-white/90">Create your owner account in a minute. Your tenants register with the email you add.</p>
+            <p className="relative mt-2 max-w-md text-white/85">Create your owner account in a minute. Your tenants register with the email you add.</p>
             <div className="relative mt-6 flex flex-col gap-3 sm:flex-row">
-              <Link to="/register"><button type="button" className="h-12 w-full rounded-lg bg-white px-6 text-base font-semibold text-navy transition hover:shadow-pop active:scale-[0.98] sm:w-auto">Create free account</button></Link>
+              <Link to="/register"><button type="button" className="h-12 w-full rounded-lg bg-brass px-6 text-base font-semibold text-navy transition hover:brightness-110 active:scale-[0.98] sm:w-auto">Create free account</button></Link>
               <Link to="/features"><button type="button" className="h-12 w-full rounded-lg border border-white/50 px-6 text-base font-semibold text-white transition hover:bg-white/15 sm:w-auto">See all features</button></Link>
             </div>
           </div>
@@ -240,7 +233,7 @@ export function FeaturesPage() {
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {FEATURES.map((f) => (
           <Card key={f.title} className="flex gap-4 p-5">
-            <span className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white", f.hue)}><f.icon className="h-5 w-5" aria-hidden /></span>
+            <span className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-lg", f.hue)}><f.icon className="h-5 w-5" aria-hidden /></span>
             <div><div className="flex flex-wrap items-center gap-2"><h2 className="font-semibold text-ink">{f.title}</h2><Badge tone={f.status === 'live' ? 'success' : 'neutral'}>{f.status === 'live' ? 'Available' : 'Coming soon'}</Badge></div><p className="mt-1 text-sm text-ink-soft">{f.text}</p></div>
           </Card>
         ))}

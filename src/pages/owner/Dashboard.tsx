@@ -8,7 +8,7 @@ import { errMsg } from '@/lib/errors'
 import { formatDate, formatINR } from '@/lib/utils'
 import type { MonthPoint, OwnerStats, PropertySummary } from '@/lib/types'
 
-const NAVY = '#1E1B4B', BLUE = '#5B3FE0', GREEN = '#12B886', AMBER = '#FFB020', GREY = '#D5D1EE'
+const NAVY = '#0E1621', BLUE = '#1F5A8A', GREEN = '#3F7D6B', AMBER = '#C8963E', GREY = '#D4D0C6'
 
 const monthLabel = (iso: string) => new Date(`${iso}T00:00:00`).toLocaleDateString('en-IN', { month: 'short', year: '2-digit' })
 const compactINR = (n: number) => new Intl.NumberFormat('en-IN', { notation: 'compact', maximumFractionDigits: 1 }).format(n)
