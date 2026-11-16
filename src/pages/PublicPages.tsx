@@ -8,6 +8,7 @@ import { formatINR } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 import { Reveal, useTilt } from '@/lib/motion'
 import HeroMedia from '@/components/HeroMedia'
+import { PRIVACY, TERMS } from '@/pages/legalContent'
 
 
 const LINKS = [
@@ -68,12 +69,12 @@ function Section({ children, className }: { children: ReactNode; className?: str
 
 
 const FEATURES: { icon: typeof Building2; title: string; text: string; status: 'live' | 'soon'; hue: string }[] = [
-  { icon: Building2, title: 'Properties and units', text: 'Keep every building, floor and unit on record, with its rent, deposit and occupancy status.', status: 'live', hue: 'bg-brand-50 text-brand' },
-  { icon: Users, title: 'Tenancies', text: 'Assign tenants to units, transfer them between units and end a tenancy with the history preserved.', status: 'live', hue: 'bg-brand-50 text-brand' },
-  { icon: CreditCard, title: 'Rent and payments', text: 'Generate invoices, record full or partial payments and issue receipts. Online payment through Razorpay is available once the platform enables it.', status: 'live', hue: 'bg-brand-50 text-brand' },
-  { icon: Wrench, title: 'Maintenance', text: 'Tenants report issues with photos. Owners assign, update and close each request, and both sides see the status.', status: 'live', hue: 'bg-brand-50 text-brand' },
-  { icon: FileSignature, title: 'Rental agreements', text: 'Record agreement terms, track end dates and renew in one step. Owners are reminded 30 and 7 days before an agreement ends.', status: 'live', hue: 'bg-brand-50 text-brand' },
-  { icon: ClipboardList, title: 'Deposits and reports', text: 'Maintain a security deposit ledger and export income, expense, outstanding-rent and vacancy reports as CSV.', status: 'live', hue: 'bg-brand-50 text-brand' },
+  { icon: Building2, title: 'Properties and units', text: 'Keep every building, floor and unit on record, with its rent, deposit and occupancy status.', status: 'live', hue: 'bg-[#E3EEF8] text-[#1F5A8A]' },
+  { icon: Users, title: 'Tenancies', text: 'Assign tenants to units, transfer them between units and end a tenancy with the history preserved.', status: 'live', hue: 'bg-[#DDF3EF] text-[#0B7F70]' },
+  { icon: CreditCard, title: 'Rent and payments', text: 'Generate invoices, record full or partial payments and issue receipts. Online payment through Razorpay is available once the platform enables it.', status: 'live', hue: 'bg-[#FBF0DA] text-[#A9731B]' },
+  { icon: Wrench, title: 'Maintenance', text: 'Tenants report issues with photos. Owners assign, update and close each request, and both sides see the status.', status: 'live', hue: 'bg-[#FBE5E1] text-[#B6453B]' },
+  { icon: FileSignature, title: 'Rental agreements', text: 'Record agreement terms, track end dates and renew in one step. Owners are reminded 30 and 7 days before an agreement ends.', status: 'live', hue: 'bg-[#ECE6FA] text-[#6A4CC2]' },
+  { icon: ClipboardList, title: 'Deposits and reports', text: 'Maintain a security deposit ledger and export income, expense, outstanding-rent and vacancy reports as CSV.', status: 'live', hue: 'bg-[#E1F0F8] text-[#1E7FA8]' },
 ]
 
 const ROLES = [
@@ -88,7 +89,7 @@ const STEPS = [
 ] as const
 
 const SECURITY = [
-  { icon: KeyRound, title: 'One-time email codes', text: 'Sign-up and password recovery use a 6-digit code sent to your email, so there are no links to click or forward.' },
+  { icon: KeyRound, title: 'Protected sign-in', text: 'Accounts are secured with hashed passwords and a verified email address, and every session is tied to its own role.' },
   { icon: LockKeyhole, title: 'Strict data separation', text: 'Access rules are enforced in the database itself. One owner can never read another owner’s properties, tenants or payments.' },
   { icon: ShieldCheck, title: 'Verified payments', text: 'An online payment marks an invoice as paid only after the payment gateway’s signed confirmation is verified on the server.' },
   { icon: History, title: 'Audit trail', text: 'Changes to financial and account records are written to an audit log that cannot be edited from the app.' },
@@ -112,20 +113,21 @@ function SectionHead({ title, lede, className }: { title: string; lede?: string;
 }
 
 function DashboardMock() {
-  const tilt = useTilt<HTMLDivElement>(3, 'perspective(1400px) rotateX(3deg) rotateY(-4deg)')
+  const tilt = useTilt<HTMLDivElement>(8, 'perspective(1400px) rotateX(6deg) rotateY(-8deg)')
   const bars = [38, 52, 44, 66, 58, 80, 72, 94]
+  const kpiColors = ['border-t-[#1F5A8A]', 'border-t-[#C8963E]', 'border-t-[#0B7F70]', 'border-t-[#B6453B]']
   const kpis = [['Collected this month', '₹1,24,000'], ['Outstanding', '₹36,000'], ['Occupied units', '18 of 20'], ['Open requests', '3']]
   return (
-    <div ref={tilt.ref} onMouseMove={tilt.onMouseMove} onMouseLeave={tilt.onMouseLeave} className="tilt mx-auto w-full max-w-5xl overflow-hidden rounded-xl border border-line bg-white shadow-[0_30px_80px_rgba(14,22,33,0.22)]" style={{ transform: 'perspective(1400px) rotateX(3deg) rotateY(-4deg)' }}>
+    <div ref={tilt.ref} onMouseMove={tilt.onMouseMove} onMouseLeave={tilt.onMouseLeave} className="tilt mx-auto w-full max-w-5xl overflow-hidden rounded-xl border border-line bg-white shadow-[0_30px_80px_rgba(14,22,33,0.22)]" style={{ transform: 'perspective(1400px) rotateX(6deg) rotateY(-8deg)' }}>
       <div className="flex items-center gap-1.5 bg-navy px-4 py-2.5"><span className="h-3 w-3 rounded-full bg-white/25" /><span className="h-3 w-3 rounded-full bg-white/25" /><span className="h-3 w-3 rounded-full bg-white/25" /><span className="ml-3 rounded-md bg-white/10 px-3 py-0.5 text-xs text-white/70">Owner dashboard · sample data</span></div>
       <div className="grid gap-4 bg-surface p-4 sm:grid-cols-4 sm:p-6">
         {kpis.map(([l, v], i) => (
-          <div key={l} className="rounded-lg border border-line bg-white p-4"><p className="text-xs font-medium text-ink-mute">{l}</p><p className={cn('mt-1 font-display text-xl font-extrabold', i === 3 ? 'text-coral' : 'text-ink')}>{v}</p></div>
+          <div key={l} className={cn('rounded-lg border border-t-4 border-line bg-white p-4', kpiColors[i])}><p className="text-xs font-medium text-ink-mute">{l}</p><p className={cn('mt-1 font-display text-xl font-extrabold', i === 3 ? 'text-coral' : 'text-ink')}>{v}</p></div>
         ))}
         <div className="rounded-lg border border-line bg-white p-4 sm:col-span-3">
           <p className="text-sm font-semibold text-ink">Rent collected, last 8 months</p>
           <div className="mt-4 flex h-36 items-end gap-2 sm:gap-3">
-            {bars.map((h, i) => <div key={i} className={cn('bar flex-1 rounded-t', i === bars.length - 1 ? 'bg-brass' : 'bg-brand')} style={{ height: `${h}%`, animationDelay: `${i * 90}ms` }} />)}
+            {bars.map((h, i) => <div key={i} className={cn('bar flex-1 rounded-t', i === bars.length - 1 ? 'bg-brass' : i % 2 ? 'bg-[#0B7F70]' : 'bg-brand')} style={{ height: `${h}%`, animationDelay: `${i * 90}ms` }} />)}
           </div>
         </div>
         <div className="rounded-lg border border-line bg-white p-4">
@@ -141,6 +143,41 @@ function DashboardMock() {
   )
 }
 
+function HeroStack() {
+  const tilt = useTilt<HTMLDivElement>(7, 'perspective(1200px) rotateX(6deg) rotateY(-14deg)')
+  const layer = (z: number, className: string, delay: string, children: ReactNode) => (
+    <div className={cn('absolute', className)} style={{ transform: `translateZ(${z}px)` }}>
+      <div className="animate-float rounded-2xl border border-white/60 bg-white/95 p-4 shadow-[0_24px_60px_rgba(0,0,0,0.35)] backdrop-blur" style={{ animationDelay: delay }}>{children}</div>
+    </div>
+  )
+  return (
+    <div className="hidden h-[26rem] lg:block" aria-hidden>
+      <div ref={tilt.ref} onMouseMove={tilt.onMouseMove} onMouseLeave={tilt.onMouseLeave} className="tilt relative mx-auto h-full w-full max-w-md" style={{ transform: 'perspective(1200px) rotateX(6deg) rotateY(-14deg)' }}>
+        {layer(20, 'left-0 top-4 w-64', '0s', <>
+          <p className="text-xs font-medium text-ink-mute">Collected this month</p>
+          <p className="mt-1 font-display text-2xl font-bold text-ink">₹1,24,000</p>
+          <div className="mt-3 flex h-14 items-end gap-1.5">
+            {[40, 55, 45, 70, 60, 85, 100].map((h, i) => <span key={i} className="flex-1 rounded-t" style={{ height: `${h}%`, background: i === 6 ? '#C8963E' : i % 2 ? '#0B7F70' : '#1F5A8A' }} />)}
+          </div>
+        </>)}
+        {layer(70, 'right-0 top-32 w-60', '1.2s', <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#DDF3EF] text-[#0B7F70]"><Check className="h-5 w-5" /></span>
+          <div><p className="text-sm font-semibold text-ink">Rent received</p><p className="text-xs text-ink-mute">Unit 2B · ₹18,500 · UPI</p></div>
+        </div>)}
+        {layer(40, 'left-6 top-60 w-60', '2.1s', <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FBE5E1] text-[#B6453B]"><Wrench className="h-5 w-5" /></span>
+          <div><p className="text-sm font-semibold text-ink">Leaking tap, Unit 4A</p><p className="text-xs text-ink-mute">Assigned · plumber tomorrow</p></div>
+        </div>)}
+        {layer(95, 'right-4 top-[21rem] w-52', '3s', <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#ECE6FA] text-[#6A4CC2]"><FileSignature className="h-5 w-5" /></span>
+          <div><p className="text-sm font-semibold text-ink">Agreement ends</p><p className="text-xs text-ink-mute">Renew in 30 days</p></div>
+        </div>)}
+      </div>
+      <p className="mt-2 text-center text-xs text-white/55">Sample data</p>
+    </div>
+  )
+}
+
 export function Landing() {
   return (
     <>
@@ -150,14 +187,19 @@ export function Landing() {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy/90 via-navy/55 to-navy/10" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-navy to-transparent" />
         <Section className="relative pb-10 pt-20 sm:pt-32">
+          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+          <div>
           <h1 className="max-w-3xl font-serif text-5xl font-medium leading-[1.04] tracking-tight sm:text-7xl">Rental management, handled with precision.</h1>
           <p className="mt-7 max-w-xl text-lg leading-8 text-white/80">Collect rent, keep tenancy records and agreements, and resolve maintenance from a single system. Tenants see exactly what they owe.</p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Link to="/register"><button type="button" className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-brass px-6 text-base font-semibold text-navy transition hover:brightness-110 active:scale-[0.98] sm:w-auto">Create owner account<ArrowRight className="h-4 w-4" aria-hidden /></button></Link>
             <Link to="/login"><button type="button" className="h-12 w-full rounded-lg border border-white/40 px-6 text-base font-semibold text-white transition hover:bg-white/10 sm:w-auto">Sign in</button></Link>
           </div>
+          </div>
+          <HeroStack />
+          </div>
           <dl className="mt-20 grid gap-6 border-t border-white/20 pt-6 text-sm sm:mt-32 sm:grid-cols-3 sm:gap-10">
-            {[['Verified by email code', 'A 6-digit code confirms sign-up and password recovery.'], ['Private by design', 'Each owner’s records are isolated in the database.'], ['Payments you can trust', 'An invoice is marked paid only after the gateway confirms it.']].map(([t, d]) => (
+            {[['Made for Indian rentals', 'Amounts in rupees, with cash, bank transfer and UPI payments recorded.'], ['Private by design', 'Each owner’s records are isolated in the database.'], ['Payments you can trust', 'An invoice is marked paid only after the gateway confirms it.']].map(([t, d]) => (
               <div key={t}><dt className="font-semibold text-white">{t}</dt><dd className="mt-1 leading-6 text-white/65">{d}</dd></div>
             ))}
           </dl>
@@ -170,8 +212,8 @@ export function Landing() {
           <Reveal className="lg:sticky lg:top-28 lg:self-start"><SectionHead title="Everything a rental portfolio needs." lede="From the first unit you add to the monthly report you hand your accountant, the records stay consistent and traceable." /></Reveal>
           <ul className="divide-y divide-line border-y border-line">
             {FEATURES.map((f) => (
-              <li key={f.title} className="grid gap-2 py-6 sm:grid-cols-[13rem_1fr] sm:gap-8">
-                <h3 className="flex items-center gap-3 text-lg font-semibold text-ink"><f.icon className="h-5 w-5 shrink-0 text-brand" aria-hidden />{f.title}</h3>
+              <li key={f.title} className="grid gap-2 py-6 sm:grid-cols-[15rem_1fr] sm:gap-8">
+                <h3 className="flex items-center gap-3 text-lg font-semibold text-ink"><span className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-xl', f.hue)}><f.icon className="h-5 w-5" aria-hidden /></span>{f.title}</h3>
                 <p className="leading-7 text-ink-soft">{f.text}</p>
               </li>
             ))}
@@ -211,7 +253,7 @@ export function Landing() {
           <ol className="mt-14 grid gap-10 md:grid-cols-3 md:gap-12">
             {STEPS.map(([t, d], i) => (
               <li key={t} className="border-t-2 border-ink pt-5">
-                <span className="font-serif text-5xl font-medium text-brand">{i + 1}</span>
+                <span className={cn('font-serif text-5xl font-medium', ['text-[#1F5A8A]', 'text-[#0B7F70]', 'text-[#C8963E]'][i])}>{i + 1}</span>
                 <h3 className="mt-3 text-xl font-semibold text-ink">{t}</h3>
                 <p className="mt-2 leading-7 text-ink-soft">{d}</p>
               </li>
@@ -251,7 +293,7 @@ export function Landing() {
       </Section>
 
       {/* Closing call to action */}
-      <div className="bg-navy text-white">
+      <div className="bg-gradient-to-br from-navy via-[#173A5C] to-[#0B6F66] text-white">
         <Section className="py-20 text-center sm:py-24">
           <h2 className="mx-auto max-w-2xl font-serif text-4xl font-medium leading-[1.1] tracking-tight sm:text-5xl">Bring your rentals into one reliable system.</h2>
           <p className="mx-auto mt-5 max-w-xl text-lg text-white/70">Create your owner account, add your first property and invite your tenants today.</p>
@@ -337,25 +379,35 @@ export function ContactPage() {
 }
 
 export function LegalPage({ kind }: { kind: 'privacy' | 'terms' }) {
-  const privacy = kind === 'privacy'
+  const doc = kind === 'privacy' ? PRIVACY : TERMS
+  const id = (i: number) => `section-${i + 1}`
   return (
-    <Section className="max-w-3xl">
-      <h1 className="text-3xl font-semibold text-ink">{privacy ? 'Privacy Policy' : 'Terms and Conditions'}</h1>
-      <p className="mt-3 rounded-lg bg-warning-50 px-3 py-2 text-sm text-amber-800">Template text. Have it reviewed by a qualified lawyer and adapted to your business before launch.</p>
-      <div className="mt-6 space-y-4 text-sm leading-6 text-ink-soft">
-        {privacy ? (
-          <>
-            <p>We collect the details you give us (name, email, phone) and the property, tenant and rent records you enter. Owners control their own records; other owners cannot see them.</p>
-            <p>We use this information only to provide the service, keep it secure and contact you about your account. We do not sell personal data.</p>
-            <p>You can ask us to correct or delete your data by contacting support.</p>
-          </>
-        ) : (
-          <>
-            <p>RentMaster provides software for recording rental properties, tenants and rent. Owners are responsible for the accuracy of the records they enter and for their own rental agreements and legal compliance.</p>
-            <p>Agreement templates, when available, are not legal advice and are not legally reviewed documents.</p>
-            <p>You must keep your login details private and tell us promptly about any unauthorised access.</p>
-          </>
-        )}
+    <Section className="py-14 sm:py-20">
+      <div className="max-w-3xl">
+        <h1 className="font-serif text-4xl font-medium tracking-tight text-ink sm:text-5xl">{doc.title}</h1>
+        <p className="mt-3 text-sm text-ink-mute">Last updated {doc.updated}</p>
+        <p className="mt-6 text-lg leading-8 text-ink-soft">{doc.intro}</p>
+      </div>
+      <div className="mt-12 grid gap-12 lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-16">
+        <nav aria-label="Contents" className="lg:sticky lg:top-24 lg:self-start">
+          <p className="text-sm font-semibold text-ink">Contents</p>
+          <ol className="mt-3 space-y-2 border-l border-line text-sm">
+            {doc.sections.map((sec, i) => <li key={sec.title}><a href={`#${id(i)}`} className="-ml-px block border-l border-transparent pl-4 text-ink-soft hover:border-brand hover:text-brand">{i + 1}. {sec.title}</a></li>)}
+          </ol>
+        </nav>
+        <div className="max-w-3xl space-y-10">
+          {doc.sections.map((sec, i) => (
+            <section key={sec.title} id={id(i)} className="scroll-mt-24">
+              <h2 className="text-xl font-semibold text-ink">{i + 1}. {sec.title}</h2>
+              <div className="mt-3 space-y-3 leading-7 text-ink-soft">
+                {sec.paras?.map((t) => <p key={t}>{t}</p>)}
+                {sec.bullets && <ul className="list-disc space-y-2 pl-5 marker:text-brand">{sec.bullets.map((t) => <li key={t}>{t}</li>)}</ul>}
+                {sec.after?.map((t) => <p key={t}>{t}</p>)}
+              </div>
+            </section>
+          ))}
+          <p className="border-t border-line pt-6 text-sm text-ink-mute">Questions about this document? <Link to="/contact" className="font-medium text-brand hover:underline">Contact us</Link>.</p>
+        </div>
       </div>
     </Section>
   )
